@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="select-none fade-in flex flex-col gap-2 relative py-3">
+      <div
+        class="shadow rounded-lg backdrop-blur-md grid grid-cols-1 sm:grid-cols-[1fr_2fr] bg-white/30 gap-1 p-2 py-5 relative"
+      >
+        <a
+          th:href="@{'/products'}"
+          class="absolute bg-darknavi text-white text-xs right-3 top-2 border px-5 py-1 rounded-full"
+          >All Products
+        </a>
+        <div class="p-2">
+          <h2
+            class="block sm:hidden border-b mb-1 border-darknavi text-3xl first-letter:text-gray-900"
+          >
+            [[${product.name}]]
+          </h2>
+          <div class="w-full h-96">
+            <img
+              th:src="${product.imageUrl}"
+              alt=""
+              class="rounded-lg shadow object-cover w-full h-full"
+            />
+          </div>
+        </div>
+        <div class="p-2 flex flex-col justify-center w-full">
+          <div class="">
+            <h1 class="hidden sm:block text-3xl first-letter:text-gray-900">
+              [[${product.name}]]
+            </h1>
+            <p class="text-sm mt-1 sm:mt-0 text-stone-700 mb-2">
+              [[${product.description}]]
+            </p>
+            <p
+              class="py-0.5 px-5 border bg-gray-200 text-sm rounded-full inline border-darknavi text-center"
+            >
+              [[${product.category}]]
+            </p>
+            <p class="py-2 text-white text-xs">
+              <span
+                class="inline-block rounded-full py-0.5 mx-1 px-4 bg-darknavi"
+                th:each="size,s:${product.sizes}"
+                >[[${size}]]</span
+              >
+            </p>
+            <p th:if="${product.stock > 0}">
+              Stock : <span class="">[[${product.stock}]]</span>
+              <span
+                class="bg-darknavi text-white inline-block px-3 rounded-full text-xs ml-2 py-0.5"
+                >In-Stock</span
+              >
+            </p>
+          </div>
+          <p th:unless="${product.stock > 0}">
+            Stock :
+            <span
+              class="font-bold"
+              th:classappend="${product.stock < 20 ? 'text-red-500':'text-black'}"
+              >[[${product.stock}]]</span
+            >
+            <span
+              class="bg-navi font-bold text-white inline-block px-3 rounded-full text-xs ml-2 pt-2 pb-1"
+              >Out of Stock</span
+            >
+          </p>
+          <div class="flex items-center justify-start gap-2 my-2">
+            <p class="text-4xl">$[[${ product.discountedPrice }]]</p>
+            <p class="line-through text-stone-500">$[[${product.price}]]</p>
+            <p class="font-bold text-blue-600">[[${product.discount}]]%</p>
+          </div>
+          <div class="flex flex-col" th:if="${product.stock > 0}">
+            <p
+              class="bg-navi text-white px-2 text-xs rounded-full items-start w-36 py-1 text-center"
+            >
+              Available
+            </p>
+
+            <th:block
+              th:if="${authenticatedUser != null && authenticatedUser.roles == 'USER' }"
+            >
+              <th:block th:if="${cartItem}">
+                <div class="flex gap-5 items-center">
+                  <button
+                    class="w-10 h-10 shadow-sm py-2 my-2 cursor-pointer bg-darknavi hover:bg-navi text-white text-center rounded-full transition-all duration-300"
+                    id="add-btn"
+                  >
+                    +
+                  </button>
+                  <p id="quantity-display">[[${cartItem.quantity}]]</p>
+                  <button
+                    class="w-10 h-10 block border shadow-sm cursor-pointer bg-darknavi hover:bg-navi text-white text-center rounded-full transition-all duration-300"
+                    id="minus-btn"
+                  >
+                    -
+                  </button>
+                </div>
+              </th:block>
+
+              <th:block th:unless="${cartItem}">
+                <div class="block" id="increment-decrement-items">
+                  <button
+                    class="text-xs md:text-sm shadow-sm py-2 px-7 my-2 cursor-pointer bg-darknavi hover:bg-navi text-white text-center rounded-full duration-300"
+                    id="add-btn"
+                  >
+                    Add Cart
+                  </button>
+                </div>
+              </th:block>
+              <script th:inline="javascript">
+                const productId = /*[[${product.productId}]]*/ 0;
+
+                const addbtn = document.getElementById("add-btn");
+                const minusbtn = document.getElementById("minus-btn");
+
+                const addCartItemQuantity = async (id) => {
+                  try {
+                    const addForm = new FormData();
+                    addForm.append("productId", id);
+                    const response = await fetch(
+                      "http://localhost:8080/api/user/addtocart",
+                      {
+                        method: "POST",
+                        body: addForm,
+                        credentials: "include",
+                      }
+                    );
+                    const { flag } = await response.json();
+                    if (flag) {
+                      location.reload();
+                    }
+                  } catch (error) {
+                    window.location.assign("/signin");
+                  }
+                };
+
+                const minusCartItemQuantity = async (id) => {
+                  try {
+                    const addForm = new FormData();
+                    addForm.append("productId", id);
+                    const response = await fetch(
+                      "http://localhost:8080/api/user/deletecartitem",
+                      {
+                        method: "POST",
+                        body: addForm,
+                        credentials: "include",
+                      }
+                    );
+                    const { flag } = await response.json();
+                    if (flag) {
+                      window.location.reload();
+                    }
+                  } catch (error) {
+                    window.location.assign("/signin");
+                  }
+                };
+
+                addbtn.onclick = (e) => {
+                  addCartItemQuantity(productId);
+                };
+                minusbtn.onclick = (e) => {
+                  minusCartItemQuantity(productId);
+                };
+              </script>
+            </th:block>
+            <th:block th:unless="${authenticatedUser}">
+              <a
+                th:href="@{'/signin'}"
+                class="w-36 inline-block text-center rounded-full text-white shadow-sm py-2 my-2 cursor-pointer bg-darknavi hover:bg-navi duration-300"
+              >
+                Add Cart
+              </a>
+            </th:block>
+          </div>
+          <div class="" th:unless="${product.stock > 0}">
+            <p>Unavailable</p>
+            <button
+              disabled="true"
+              class="w-96 mx-auto cursor-not-allowed shadow-sm py-2 my-2 hover:bg-gray-400 duration-300"
+            >
+              Out Of Stock
+            </button>
+          </div>
+
+          <div class="flex gap-5 my-2">
+            <div
+              class="flex-1 bg-darknavi rounded-lg text-white shadow-sm py-5 text-center"
+            >
+              <p class="text-sm lg:text-xl">Easy Return within 7 Days</p>
+            </div>
+            <div
+              class="flex-1 bg-darknavi rounded-lg text-white shadow-sm py-5 text-center"
+            >
+              <p class="text-sm lg:text-xl">Free Delivery Cost</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white/30 px-5 py-2">
+        <h1
+          class="border-b border-gray-800 py-2 text-center text-xl md:text-3xl"
+        >
+          <span class="text-gray-900">All</span> Related Collections
+        </h1>
+
+        <th:block th:if="${productsSize > 0}">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 p-1">
+            <div
+              class="rounded-md relative p-1 shadow-sm bg-white/60 backdrop-blur-sm hover:bg-gradient-to-b hover:from-gray-200/50 hover:to-white duration-700 cursor-pointer select-none"
+              th:each="prop,c : ${productCategory}"
+            >
+              <div class="">
+                <img
+                  th:src="${prop.imageUrl}"
+                  class="h-64 w-full object-cover object-top"
+                  alt=""
+                />
+              </div>
+              <div class="py-2 px-3 text-center">
+                <p class="text-sm">[[${prop.name}]]</p>
+                <p class="font-semibold">[[${prop.category}]]</p>
+                <p class="text-xs text-stone-400">[[${prop.description}]]</p>
+              </div>
+              <span
+                class="px-2 py-0.5 text-sm absolute top-5 right-5 text-white rounded-full bg-darknavi"
+              >
+                [[${prop.discount}]] %
+              </span>
+              <a
+                th:href="@{'/productdetails/'+${prop.productId}}"
+                class="py-0.5 text-white rounded-full w-full text-center bottom-1 right-3 duration-150 bg-gray-700 inline-block"
+                >Details</a
+              >
+            </div>
+          </div>
+        </th:block>
+        <th:block th:unless="${productsSize > 0}">
+          <div
+            class="flex justify-center items-center text-center w-[85%] mx-auto h-48"
+          >
+            <h1 class="text-3xl text-gray-950">
+              <span class="text-gray-500">Related Products</span> Not Available.
+            </h1>
+          </div>
+        </th:block>
+      </div>
+
+      <div class="bg-white/30 p-5">
+        <div class="py-3 flex flex-col gap-2">
+          <div
+            class="grid shadow-md rounded-md gap-5 py-2 px-5"
+            th:classappend="${authenticatedUser != null ? authenticatedUser.roles == 'USER'?'grid-cols-1 lg:grid-cols-2':'grid-cols-1' :''}"
+          >
+            <th:block
+              th:if="${authenticatedUser != null && authenticatedUser.roles == 'USER'}"
+            >
+              <form
+                th:action="@{'/user/rating/'+${product.productId}}"
+                method="POST"
+                th:object="${rating}"
+                class="p-2"
+              >
+                <h1 class="border-b border-gray-500 text-3xl py-1 mb-2">
+                  Ratings
+                </h1>
+                <div class="flex flex-col w-full pr-4 border rounded-full">
+                  <select
+                    name="rating"
+                    id="rating"
+                    th:field="*{rating}"
+                    class="py-1 text-center bg-transparent focus:outline-none border-gray-200 cursor-pointer text-lg"
+                    required
+                  >
+                    <option th:value="${1}">1</option>
+                    <option th:value="${2}">2</option>
+                    <option th:value="${3}">3</option>
+                    <option th:value="${4}">4</option>
+                    <option th:value="${5}">5</option>
+                  </select>
+                </div>
+                <div class="flex flex-col border rounded-lg mt-2">
+                  <textarea
+                    name="review"
+                    placeholder="What did you like or dislike about this item?"
+                    rows="3"
+                    th:field="*{review}"
+                    required
+                    id="review"
+                    class="placeholder:text-stone-500 p-3 bg-transparent focus:outline-none"
+                  ></textarea>
+                </div>
+
+                <th:block th:if="${authenticatedUser}">
+                  <button
+                    type="submit"
+                    class="px-10 py-1 my-3 inline-block text-center rounded-full duration-300 hover:shadow-md shadow-sm bg-darknavi text-white cursor-pointer"
+                  >
+                    Send
+                  </button>
+                </th:block>
+                <th:block th:unless="${authenticatedUser}">
+                  <a
+                    th:href="@{/signin}"
+                    disabled
+                    class="line-through w-52 inline-block text-center px-2 py-2 my-3 rounded-full font-bold duration-300 hover:shadow-md shadow-sm bg-darknavi text-white hover:text-red-600 cursor-not-allowed"
+                  >
+                    Send
+                  </a>
+                </th:block>
+              </form>
+            </th:block>
+
+            <div class="">
+              <h1 class="p-1 text-3xl w-full border-b border-darknavi">
+                Product Rating
+              </h1>
+              <div
+                class="flex flex-col items-center p-2 w-[95%] sm:w-[85%] md:w-[75%] lg:w-[60%] mx-auto"
+                th:classappend="${authenticatedUser != null ? authenticatedUser.roles =='ADMIN'?'h-96 border border-red-500':'' :''}"
+              >
+                <canvas id="ratingChart" class="" style="width: 200px"></canvas>
+              </div>
+            </div>
+            <script th:inline="javascript">
+              let key = /*[[${ratingKeys}]]*/ [];
+              let values = /*[[${ratingValues}]]*/ [];
+              key = key.map((item) => {
+                let data = "";
+                for (let index = 0; index < item; index++) {
+                  data += "⭐";
+                }
+                return data;
+              });
+
+              const ctx = document
+                .getElementById("ratingChart")
+                .getContext("2d");
+
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: key,
+                  datasets: [
+                    {
+                      label: "Ratings",
+                      data: values,
+                      backgroundColor: [
+                        "rgb(1, 0, 82)",
+                        "rgb(16, 14, 138)",
+                        "rgb(44, 42, 179)",
+                        "rgb(85, 83, 243)",
+                        "rgb(179, 177, 255)",
+                      ],
+                      borderWidth: 1,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  indexAxis: "y",
+                  scales: {
+                    x: {
+                      beginAtZero: true,
+                      min: 0,
+                      max: 60,
+                      ticks: {
+                        stepSize: 1,
+                      },
+                    },
+                  },
+                },
+              });
+            </script>
+          </div>
+
+          <div class="p-3 flex mt-10 flex-col gap-5">
+            <h1 class="text-3xl">Ratings & Reviews</h1>
+            <th:block th:unless="${productRatings}">
+              <div class="shadow-sm py-3 text-center text-2xl">
+                <h1>No Ratings & Reviews</h1>
+              </div>
+            </th:block>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <th:block th:if="${productRatings}">
+                <div
+                  class="p-2 bg-darknavi rounded-xl shadow-sm"
+                  th:each="rating,r:${productRatings}"
+                >
+                  <div class="flex px-2 items-center mb-1">
+                    <i
+                      class="text-lg fa-solid fa-star tracking-in-expand"
+                      th:each="i : ${#numbers.sequence(1,5)}"
+                      th:classappend="${i <= rating.rating ? 'text-amber-500':'text-gray-300'}"
+                    ></i>
+                  </div>
+                  <div class="px-2">
+                    <p class="text-gray-400 text-xs text-justify md:text-lg">
+                      "[[${rating.review}]]"
+                    </p>
+                    <p class="text-sm text-white">[[${rating.username}]]</p>
+                    <p class="text-xs text-lighnavi">Customer</p>
+                  </div>
+                </div>
+              </th:block>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

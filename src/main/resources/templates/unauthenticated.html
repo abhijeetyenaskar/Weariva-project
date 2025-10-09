@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weariva Access Denied</title>
+    <link rel="stylesheet" href="" data-th-href="@{/css/output.css}" />
+  </head>
+  <body class="bg-[url('/images/forget.jpg')] bg-cover bg-center bg-no-repeat min-h-screen flex justify-center items-center">
+    <th:block th:if="${authenticatedUser}">
+      <div class="text-center">
+        <h1 class="text-8xl drop-shadow-lg bg-gradient-to-r from-darknavi  to-navi bg-clip-text text-transparent" >Access Denied!</h1>
+        <p class="text-xl">
+          You don't have right permission to Access current URL
+        </p>
+        <a
+          th:href="@{${authenticatedUser.roles == 'ADMIN' ? '/admin' : '/user'}}"
+          class="text-lg shadow-md bg-darknavi hover:bg-navi text-white duration-300 px-8 py-2 mt-5 inline-block rounded-full"
+          >[[${authenticatedUser.roles == 'ADMIN' ? "Admin" : "User"}]]</a
+        >
+      </div>
+    </th:block>
+  </body>
+</html>

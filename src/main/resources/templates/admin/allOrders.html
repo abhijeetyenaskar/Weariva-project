@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="select-none fade-in">
+      <ul class="flex justify-center flex-wrap gap-1 py-3">
+        <li class="">
+          <a
+            th:classappend="${paramvalue == '' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >All</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'PENDING' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=PENDING}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Pending</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'CONFIRM' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=CONFIRM}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Confirm</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'PROCESSING' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=PROCESSING}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Processing</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'DISPATCHED' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=DISPATCHED}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Dispatched</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'OUT_FOR_DELIVERY' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=OUT_FOR_DELIVERY}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Out for Delivery</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'DELIVERED' ? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=DELIVERED}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Delivered</a
+          >
+        </li>
+        <li class="">
+          <a
+            th:classappend="${paramvalue == 'CANCELLED'? 'text-white bg-darknavi' : 'hover:bg-navi/20 hover:border-darknavi hover:scale-[1.02] active:scale-100'}"
+            th:href="@{/admin/allorders?category=CANCELLED}"
+            class="transition-all mt-0.5 text-sm rounded-md w-full px-5 inline-block py-1 border border-navi/30 shadow duration-300"
+            >Cancelled</a
+          >
+        </li>
+      </ul>
+      <div class="py-3 flex justify-between border-b border-gray-300">
+        <h1 class="py-1 text-3xl">All Orders</h1>
+
+        <div
+          class="h-10 w-[40%] border rounded-full flex justify-center items-center relative"
+        >
+          <input
+            type="text"
+            id="searchquery"
+            class="rounded-s-full flex-1 px-6 text-sm h-full bg-transparent focus:outline-none"
+            placeholder="Enter Order Id"
+          />
+          <button
+            onclick="clearFunction()"
+            class="absolute top-1 bottom-1 rounded-full right-1 bg-stone-800 hover:scale-105 active:scale-100 text-white border px-3"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+      <script>
+        const changeOrderStatus = async (orderId, status) => {
+          try {
+            const changeForm = new FormData();
+            changeForm.append("orderId", Number(orderId));
+            changeForm.append("status", status);
+            const response = await fetch(
+              "http://localhost:8080/api/commonadminboy/changestatus",
+              {
+                method: "POST",
+                body: changeForm,
+                credentials: "include",
+              }
+            );
+            const { flag, message } = await response.json();
+            if (flag) {
+              location.reload();
+            } else {
+              throw new Error(message);
+            }
+          } catch (error) {
+            console.log(error?.message);
+          }
+        };
+
+        const allotDeliveryBoy = async (orderId, delivery) => {
+          try {
+            const allotdeliveryboy = new FormData();
+            allotdeliveryboy.append("username", delivery);
+            allotdeliveryboy.append("orderId", Number(orderId));
+            const response = await fetch(
+              "http://localhost:8080/api/admin/addordertodelivery",
+              {
+                method: "POST",
+                body: allotdeliveryboy,
+                credentials: "include",
+              }
+            );
+            const { flag, message } = await response.json();
+            if (flag) {
+              location.reload();
+            } else {
+              throw new Error(message);
+            }
+          } catch (error) {
+            console.log(error?.message);
+          }
+        };
+
+        const paymentStatusUpdate = async (
+          orderId,
+          paymentway,
+          transactionId,
+          paymentStatus
+        ) => {
+          try {
+            const paymentStatusData = new FormData();
+            paymentStatusData.append("orderId", Number(orderId));
+            paymentStatusData.append("paymentWay", paymentway);
+            if (paymentway !== "cash") {
+              paymentStatusData.append("transactionId", transactionId);
+            }
+            paymentStatusData.append("paymentStatus", paymentStatus);
+            const response = await fetch(
+              "http://localhost:8080/api/commonadminboy/paymentupdate",
+              {
+                method: "POST",
+                body: paymentStatusData,
+                credentials: "include",
+              }
+            );
+            const { flag, message } = await response.json();
+            if (flag) {
+              location.reload();
+            } else {
+              throw new Error(message);
+            }
+          } catch (error) {
+            console.log(error?.message);
+          }
+        };
+      </script>
+
+      <h1 id="ordermessage"></h1>
+      <div class="py-5 px-2 md:px-12 flex flex-col gap-5">
+        <th:block th:if="${allOrders.size() > 0}">
+          <div
+            class="px-3 py-1 duration-300 bg-stone-100 shadow group orders"
+            th:each="myorder,stat: ${allOrders}"
+          >
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-1">
+                <h1 class="md:text-md">
+                  Order Id :
+                  <span class="">[[${stat.index + 1}]]</span>
+                </h1>
+              </div>
+
+              <div class="flex gap-2 items-center">
+                <div class="flex text-xs gap-2 px-3 py-1">
+                  <p>Delivery fees</p>
+                  :
+                  <p class="">$ 20</p>
+                </div>
+                <div
+                  class="flex gap-2 bg-white border-b border-darknavi shadow rounded-full px-3 py-1 justify-center"
+                >
+                  <p class="font-bold text-md">
+                    $ [[${myorder.totalOrderAmount}]]
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-center gap-1 px-1">
+              <p class="inline-block rounded-full bg-white text-xs border border-navi px-6 py-1">
+                [[${myorder.paymentMode == "cod" ? "COD" : "Paid Online"}]]
+              </p>
+              <p
+                id="show-order-status"
+                class="inline-block rounded-full text-[10px] sm:text-xs text-white px-6 py-1"
+                th:classappend="${myorder.orderStatus.toString().equals('CANCELLED')? 'bg-red-600' : (myorder.orderStatus.toString().equals('DELIVERED')? 'bg-green-600' : 'bg-darknavi')}"
+              >
+                [[${myorder.orderStatus}]]
+              </p>
+              <p
+                class="inline-block rounded-full text-xs bg-darknavi text-white px-6 py-1"
+              >
+                [[${myorder.paymentStatus}]]
+              </p>
+            </div>
+            <div class="px-2 py-1">
+              <div class="">
+                <div class="flex justify-between items-center">
+                  <h1 class="text-md border-b border-black">
+                    Ordered Products
+                  </h1>
+                  <p
+                    class="text-right text-xs border bg-darknavi px-2 text-white rounded-full py-1"
+                  >
+                    [[${#temporals.format(myorder.orderDate,'dd-MM-yy HH:mm')}]]
+                  </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
+                  <div
+                    class="flex py-2 px-4 items-center gap-3 shadow my-1 rounded-full bg-white"
+                    th:each="order : ${myorder.items}"
+                  >
+                    <div
+                      class="w-6 h-6 rounded-full overflow-hidden shadow-md drop-shadow-md"
+                    >
+                      <img
+                        class="object-cover h-full w-full"
+                        th:src="${order.productImage}"
+                        alt=""
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-xs">
+                        [[${order.productName}]] (<span class="text-navi"
+                          >$[[${order.discountedPrice}]]</span
+                        >/[[${order.quantity}]]qty)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="w-full text-center md:text-left flex flex-col justify-between"
+              >
+                <div class="mt-1">
+                  <div class="">
+                    <p class="text-lg">[[${myorder.user.name}]]</p>
+                    <p class="text-xs text-gray-500">
+                      [[${myorder.user.email}]] | [[${myorder.user.phone}]]
+                    </p>
+                    <div class="capitalize text-xs">
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.street}]],
+                      </p>
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.city}]],
+                      </p>
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.state}]]
+                      </p>
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.country}]]
+                      </p>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <th:block
+                      th:unless="${myorder.orderStatus.toString().equals('CANCELLED') }"
+                    >
+                      <div
+                        class="flex flex-col lg:flex-row items-center justify-between gap-2"
+                      >
+                        <div class="">
+                          <div
+                            class="flex gap-2 p-1 rounded-full text-xs border border-navi bg-white"
+                          >
+                            <div
+                              class="flex flex-col gap-3 border border-darknavi bg-darknavi rounded-full pr-2"
+                            >
+                              <select
+                                name="paymentway"
+                                th:id="'payment-way-'+${myorder.orderId}"
+                                th:disabled="${myorder.paymentStatus.toString().equals('PAID')?true:false}"
+                                class="text-white h-full bg-transparent px-2 focus:outline-none"
+                              >
+                                <option class="text-black" value="cash">
+                                  Cash
+                                </option>
+                                <option class="text-black" value="online">
+                                  Online
+                                </option>
+                              </select>
+                            </div>
+                            <div
+                              th:id="'payment-online-' + ${myorder.orderId}"
+                              class="transition-all duration-700 hidden pr-2 "
+                            >
+                              <input
+                                type="text"
+                                th:name="'transactionid-'+${myorder.orderId}"
+                                th:id="'transactionid-'+${myorder.orderId}"
+                                placeholder="TransactionId"
+                                class="border border-darknavi bg-darknavi rounded-full text-black h-full bg-transparent px-2 focus:outline-none"
+                              />
+                              <input
+                                type="text"
+                                th:name="'transactionway-'+${myorder.orderId}"
+                                th:id="'transactionway-'+${myorder.orderId}"
+                                placeholder="Transaction Portal"
+                                class="border border-darknavi bg-darknavi rounded-full text-black h-full bg-transparent px-2 focus:outline-none"
+                              />
+                            </div>
+                            <div class="flex flex-col gap-3">
+                              <select
+                                name="status"
+                                th:id="'status-payment-' + ${myorder.orderId}"
+                                class="h-full bg-transparent px-2 focus:outline-none"
+                              >
+                                <option
+                                  th:unless="${#lists.contains({'PAID'},myorder.paymentStatus.toString())}"
+                                  value="PAYMENT_AWAITING"
+                                  selected
+                                >
+                                  Payment Awaiting
+                                </option>
+                                <option
+                                  th:unless="${#lists.contains({'PAID'},myorder.paymentStatus.toString())}"
+                                  value="PAYMENT_FAILED"
+                                >
+                                  Paid Failed
+                                </option>
+                                <option
+                                  th:unless="${#lists.contains({'REFUND_INITIATED'},myorder.paymentStatus.toString())}"
+                                  value="PAID"
+                                >
+                                  Paid
+                                </option>
+                                <option
+                                  th:unless="${#lists.contains({'REFUNDED'},myorder.paymentStatus.toString())}"
+                                  value="REFUND_INITIATED"
+                                >
+                                  Refund Initiated
+                                </option>
+                                <option
+                                  th:unless="${#lists.contains({'REFUNDED'},myorder.paymentStatus.toString())}"
+                                  value="REFUNDED"
+                                >
+                                  Refunded
+                                </option>
+                              </select>
+                            </div>
+                            <script th:inline="javascript">
+                              document.getElementById(
+                                "payment-way-[[${myorder.orderId}]]"
+                              ).onchange = (e) => {
+                                if (e.target.value == "online") {
+                                  document
+                                    .getElementById(
+                                      "payment-online-[[${myorder.orderId}]]"
+                                    )
+                                    .classList.toggle("block");
+                                  document
+                                    .getElementById(
+                                      "payment-online-[[${myorder.orderId}]]"
+                                    )
+                                    .classList.toggle("hidden");
+                                } else {
+                                  document
+                                    .getElementById(
+                                      "payment-online-[[${myorder.orderId}]]"
+                                    )
+                                    .classList.toggle("block");
+                                  document
+                                    .getElementById(
+                                      "payment-online-[[${myorder.orderId}]]"
+                                    )
+                                    .classList.toggle("hidden");
+                                }
+                              };
+                              document.getElementById(
+                                "status-payment-[[${myorder.orderId}]]"
+                              ).onchange = (e) => {
+                                paymentStatusUpdate(
+                                  /*[[${myorder.orderId}]]*/ 0,
+                                  document.getElementById(
+                                "payment-way-[[${myorder.orderId}]]"
+                              ).value,
+                                  document.getElementById(
+                                    "transactionid-[[${myorder.orderId}]]"
+                                  ).value,
+                                  e.target.value
+                                );
+                              };
+                            </script>
+                          </div>
+                        </div>
+                        <div
+                          class="flex gap-2"
+                          th:unless="${myorder.orderStatus.toString().equals('DELIVERED')}"
+                        >
+                          <div class="">
+                            <div
+                              class="flex gap-2 p-1 rounded-full bg-white text-xs border border-navi"
+                            >
+                              <div class="flex flex-col gap-3 ">
+                                <select
+                                  name="status"
+                                  th:id="'status-order-' + ${myorder.orderId}"
+                                  class="h-full bg-transparent px-2 focus:outline-none"
+                                >
+                                  <optgroup label="Order Status">
+                                    <option
+                                      th:unless="${#lists.contains({'CONFIRM','PROCESSING','DISPATCHED','OUT_FOR_DELIVERY'},myorder.orderStatus.toString())}"
+                                      value="PENDING"
+                                      selected
+                                    >
+                                      Pending
+                                    </option>
+                                    <option
+                                      th:unless="${#lists.contains({'PROCESSING','DISPATCHED','OUT_FOR_DELIVERY'},myorder.orderStatus.toString())}"
+                                      value="CONFIRM"
+                                    >
+                                      Confirm
+                                    </option>
+                                    <option
+                                      th:unless="${#lists.contains({'DISPATCHED','OUT_FOR_DELIVERY'},myorder.orderStatus.toString())}"
+                                      value="PROCESSING"
+                                    >
+                                      Processing
+                                    </option>
+                                    <option
+                                      th:unless="${#lists.contains({'OUT_FOR_DELIVERY'},myorder.orderStatus.toString())}"
+                                      value="DISPATCHED"
+                                    >
+                                      Dispatched
+                                    </option>
+                                    <option value="OUT_FOR_DELIVERY">
+                                      Out for Delivery
+                                    </option>
+                                    <option value="DELIVERED">Delivered</option>
+                                    <option value="REJECTED">Rejected</option>
+                                  </optgroup>
+                                </select>
+                              </div>
+                              <script th:inline="javascript">
+                                document.getElementById(
+                                  "status-order-[[${myorder.orderId}]]"
+                                ).onchange = (e) => {
+                                  changeOrderStatus(
+                                    /*[[${myorder.orderId}]]*/ 0,
+                                    e.target.value
+                                  );
+                                };
+                              </script>
+                            </div>
+                          </div>
+                          <div th:if="${myorder.deliveryAgent == null}">
+                            <div
+                              class="flex gap-2 p-1 rounded-full bg-white text-xs border border-navi"
+                            >
+                              <div class="flex flex-col gap-3">
+                                <select
+                                  name="status"
+                                  th:id="'change-delivery-boy'+${myorder.orderId}"
+                                  class="h-full bg-transparent px-2"
+                                >
+                                  <option value="" selected>
+                                    Select Delivery Agent
+                                  </option>
+                                  <option value="rakeshkhanna@admin">
+                                    Rakesh Khanna
+                                  </option>
+                                  <option
+                                    th:each="man,s : ${alldelivery}"
+                                    th:value="${man.username}"
+                                  >
+                                    [[${man.name}]]
+                                  </option>
+                                </select>
+                                <script th:inline="javascript">
+                                  document.getElementById(
+                                    "change-delivery-boy" +
+                                      /*[[${myorder.orderId}]]*/ ""
+                                  ).onchange = (e) => {
+                                    allotDeliveryBoy(
+                                      /*[[${myorder.orderId}]]*/ 0,
+                                      e.target.value
+                                    );
+                                    console.log("Delivery Boy changed");
+                                  };
+                                </script>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </th:block>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </th:block>
+
+        <th:block th:unless="${allOrders.size() > 0}">
+          <div class="py-5">
+            <h1 class="text-5xl tracking-in-expand text-darknavi text-center">
+              -- No Orders --
+            </h1>
+          </div>
+        </th:block>
+      </div>
+      <script th:inline="javascript">
+        const searchquery = document.getElementById("searchquery");
+
+        function clearFunction() {
+          document.getElementById("searchquery").value = "";
+          document.getElementById("ordermessage").innerText = "";
+        }
+
+        searchquery.oninput = (e) => {};
+      </script>
+    </section>
+  </body>
+</html>

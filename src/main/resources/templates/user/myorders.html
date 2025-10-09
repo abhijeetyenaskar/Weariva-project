@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    
+    <section class="px-12 select-none">
+      <h1 class="text-4xl border-b mb-2 border-gray-600 w-full py-2">
+        My Orders
+      </h1>
+      <div class="py-5 flex flex-col gap-5">
+        <th:block th:if="${allOrdersSize > 0}">
+          <div
+            th:each="myorder : ${allOrders}"
+            class="p-2 relative fade-in rounded-lg duration-300 shadow hover:shadow-md border group transition-all bg-stone-100"
+          >
+            <p class="text-xs absolute top-2 right-8">
+              [[${#temporals.format(myorder.orderDate,"dd-MM-yy HH:mm")}]]
+            </p>
+
+            <div class="px-2 gap-4 bg-white/30 py-3">
+              <div class="px-3">
+                <h1 class="text-md border-b border-black">
+                  Ordered Items (
+                  <span class="text-xs text-lighnavi"
+                    >[[${myorder.paymentMode == "cod" ? "Cash on Delivery" :
+                    "Online"}]]</span
+                  >
+                  )
+                </h1>
+                <div class="w-full mt-1">
+                  <div
+                    th:each="order : ${myorder.items}"
+                    class="grid grid-cols-10 p-0.5 bg-white items-center rounded-lg border my-1 text-xs sm:text-sm"
+                  >
+                    <p class="flex justify-center items-center">
+                      <img
+                        class="object-cover h-8 rounded-md"
+                        th:src="${order.productImage}"
+                        alt=""
+                      />
+                    </p>
+                    <p class="col-span-6">
+                      [[${order.productName}]] x [[${order.quantity}]]
+                      ([[${order.discount}]]%)
+                    </p>
+                    <p class="col-span-2 text-right">$[[${order.price}]]</p>
+                    <p class="text-right px-2">
+                      $[[${order.quantity * order.discountedPrice}]]
+                    </p>
+                  </div>
+                  <div
+                    class="mt-1 flex justify-between bg-white items-center border rounded-lg p-0.5"
+                  >
+                    <p colspan="3" class="px-2">Delivery Fees</p>
+                    <p class="text-right px-2 text-sm">$ 20</p>
+                  </div>
+                  <div
+                    class="mt-1 flex justify-between items-center border rounded-lg p-0.5 bg-darknavi text-white"
+                  >
+                    <p colspan="3" class="px-2">Total Amount</p>
+                    <p class="text-right px-2">
+                      $ [[${myorder.totalOrderAmount}]]
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="px-3 w-full">
+                <div
+                  class="px-2 my-2 rounded-md transition-all overflow-hidden duration-500"
+                >
+                  <div class="">
+                    <p class="text-xl">[[${myorder.user.name}]]</p>
+                    <div class="flex items-center gap-2">
+                      <p class="text-xs text-gray-500">
+                        [[${myorder.user.email}]]
+                      </p>
+                      <p class="text-sm">([[${myorder.user.phone}]])</p>
+                    </div>
+
+                    <div class="capitalize text-xs">
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.street}]],
+                      </p>
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.city}]],
+                      </p>
+                      <p class="inline-block">
+                        [[${myorder.orderAddress.state}]]
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-end gap-5">
+                  <p
+                    class="rounded-full text-xs text-white py-1 px-3"
+                    th:classappend="${myorder.orderStatus.toString() == 'CANCELLED' ? 'bg-red-600' : (myorder.orderStatus.toString() == 'DELIVERED' ? 'bg-green-600' : 'bg-darknavi')}"
+                  >
+                    [[${myorder.orderStatus.toString() }]]
+                  </p>
+                  <p
+                    class="rounded-full text-xs text-white py-1 px-3 bg-darknavi"
+                  >
+                    [[${myorder.paymentStatus }]]
+                  </p>
+                  <th:block
+                    th:unless="${
+                      #lists.contains({'CANCELLED','DELIVERED','REJECTED','FAILED','RETURN_REQUESTED','RETURNED'},myorder.orderStatus.toString())}"
+                  >
+                    <a
+                    class="text-center text-xs float-right rounded-full text-white shadow-sm py-1 px-3 cursor-pointer bg-gray-600 hover:bg-gray-800 duration-300 inline-block"
+                    th:href="@{'/user/updatstatus/CANCELLED/' + ${myorder.orderId}}"
+                      >Cancel Order</a
+                    >
+                  </th:block>
+                </div>
+              </div>
+            </div>
+          </div>
+        </th:block>
+
+        <th:block th:unless="${allOrdersSize > 0}">
+          <div class="text-center py-12">
+            <h1 class="text-4xl tracking-in-expand">No Orders</h1>
+            <p>Please, Order products that you like</p>
+          </div>
+        </th:block>
+      </div>
+    </section>
+  </body>
+</html>

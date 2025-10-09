@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <section class="py-3">
+      <div class="w-[50%] rounded-xl mx-auto p-3 py-5 text-center">
+        <h2 class="text-3xl first-letter:text-darknavi">OTP Varification</h2>
+        <p class="text-center">
+          One Time Password has been sent via [[${type}]] on <br /><span
+            id="otpdata"
+            class="text-darknavi"
+            >[[${choose}]]</span
+          >
+        </p>
+        <form action="/varifyOtp" method="post" class="relative" id="verifybtn">
+          <div class="">
+            <p>Enter the OTP to varify it</p>
+            <div class="px-3 flex flex-col">
+              <input
+                type="text"
+                hidden
+                class="w-[60%] placeholder:text-center text-center rounded-full mx-auto border-b border-darknavi px-5 pb-1.5 pt-2 mb-2"
+                name="username"
+                th:value="${username}"
+              />
+              <input
+                type="number"
+                placeholder="OTP"
+                min="000000"
+                max="999999"
+                maxlength="6"
+                id="otp"
+                name="otp"
+                class="w-[60%] placeholder:text-center text-center rounded-full mx-auto border-b border-darknavi px-5 pb-1.5 pt-2 mb-2"
+              />
+            </div>
+            <p
+              id="timeout"
+              class="absolute rounded-full px-3 shadow-md bottom-1 right-1 first-letter:text-red-900 text-red-500 text-right text-sm"
+            ></p>
+            <button
+              class="bg-navi pt-1 pb-1 px-4 rounded-full text-md hover:font-bold hover:shadow-md hover:bg-darknavi duration-500"
+            >
+              Verify OTP
+            </button>
+          </div>
+        </form>
+
+        <form method="post" action="/sendOTP" id="resendotp" class="hidden">
+          <div>
+            <p>Resend the OTP to Verify</p>
+            <div class="px-3">
+              <div class="mt-2">
+                <input
+                  type="radio"
+                  class="hidden peer accent-blue-900"
+                  id="resentotpway"
+                  name="choose"
+                  onclick="checkInputResendButton()"
+                  th:value="${choose}"
+                />
+                <label
+                  for="resentotpway"
+                  id="chooselabel"
+                  class="peer-checked:shadow-md peer-checked:rounded-full transition-all peer-checked:font-semibold rounded-full mx-auto cursor-pointer peer-checked:bg-blue-50 border-b py-2 px-3 w-[50%] block"
+                  >[[${choose}]]</label
+                >
+              </div>
+              <button
+                id="resendButton"
+                class="pt-1.5 mt-2 pb-1 px-4 rounded-full text-md hover:font-bold hover:shadow-md duration-500"
+              >
+                Resend OTP
+              </button>
+            </div>
+          </div>
+        </form>
+        <a href="/forgetpassword" class="my-2 inline-block hover:font-semibold"
+          >Back</a
+        >
+      </div>
+      <script th:inline="javascript">
+        const otpdata = document.getElementById("otpdata");
+        if (otpdata) {
+          otpdata.innerHTML = customizeString(otpdata.innerHTML);
+        }
+
+        const choose = document.getElementById("chooselabel");
+        if (choose) {
+          choose.innerHTML = customizeString(choose.innerHTML);
+        }
+
+        const timeout = document.getElementById("timeout");
+        let resentOtp = document.getElementById("resendotp");
+        let varifyotp = document.getElementById("verifybtn");
+        let time = 0;
+        if (timeout) {
+          let internalstop = setInterval(() => {
+            timeout.innerHTML = time < 9 ? "00:0" + ++time : "00:" + ++time;
+            varifyotp.style.display = "block";
+          }, 1000);
+          setTimeout(() => {
+            timeout.style.display = "none";
+            varifyotp.style.display = "none";
+            resentOtp.style.display = "block";
+            clearInterval(internalstop);
+          }, 60000);
+        }
+
+        /* Resend OTP Validation Page */
+        const resentOtpWay = document.getElementById("resentotpway");
+        const resendButton = document.getElementById("resendButton");
+        if (resendButton) {
+          resendButton.style.cursor = "not-allowed";
+          resendButton.classList.add("bg-red-200", "hover:bg-red-400");
+          resendButton.setAttribute("disabled", true);
+        }
+
+        function checkInputResendButton() {
+          if (resentOtpWay.checked) {
+            resendButton.style.cursor = "pointer";
+            resendButton.removeAttribute("disabled");
+            resendButton.classList.remove("bg-red-200", "hover:bg-red-400");
+            resendButton.classList.add("bg-blue-200", "hover:bg-blue-400");
+          }
+        }
+      </script>
+    </section>
+  </body>
+</html>

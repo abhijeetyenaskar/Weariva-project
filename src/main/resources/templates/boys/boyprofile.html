@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="py-3">
+      <th:block th:if="${authenticatedUser}">
+        <div class="">
+          <div class="flex justify-between items-center px-2">
+            <h1 class="text-3xl text-darknavi px-3">Profile Information</h1>
+            <a th:href="@{/admin/editprofile}" class="border  text-xs px-3 rounded-3xl bg-darknavi text-white py-1">Edit</a>
+          </div>
+          <div class="text-xl px-6">
+            <h4>
+              <span class="w-36 inline-block">Name </span>:
+              [[${authenticatedUser.name}]]
+            </h4>
+            <p class="text-sm">
+              <span class="w-36 inline-block">Username </span>:
+              [[${authenticatedUser.username}]]
+            </p>
+            <p class="text-sm">
+              <span class="w-36 inline-block">Email </span>:
+              [[${authenticatedUser.email}]]
+            </p>
+            <p class="text-sm">
+              <span class="w-36 inline-block">Phone </span>:
+              [[${authenticatedUser.phone}]]
+            </p>
+            <p class="text-sm">
+              <span class="w-36 inline-block">Address </span>:
+              [[${authenticatedUser.city}]], [[${authenticatedUser.state}]], zip
+              : [[${authenticatedUser.pin}]]
+            </p>
+          </div>
+        </div>
+        <div class="text-xl px-3 mt-5">
+          <div class="flex justify-between items-center px-2">
+            <h3 class="text-3xl">Change Password</h3>
+          </div>
+          <form
+            th:action="@{admin/resetPassword}"
+            action=""
+            method="post"
+            class="py-2"
+          >
+            <div class="flex gap-2">
+              <div
+                class="flex items-center w-full bg-transparent border border-stone-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 backdrop-blur-sm"
+              >
+                <input
+                  type="password"
+                  name="newpassword"
+                  id="newpass"
+                  placeholder="New Password"
+                  class="bg-transparent text-stone-700/80 placeholder-stone-700/80 outline-none text-sm w-full h-full"
+                  autocomplete="true"
+                  required
+                />
+              </div>
+              <div
+                class="flex items-center w-full bg-transparent border border-stone-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 backdrop-blur-sm"
+              >
+                <input
+                  type="password"
+                  name="confirmpassword"
+                  id="confirmpass"
+                  placeholder="Confirm Password"
+                  class="bg-transparent text-stone-700/80 placeholder-stone-700/80 outline-none text-sm w-full h-full"
+                  autocomplete="true"
+                  required
+                />
+              </div>
+            </div>
+            <button
+              class="mt-3 w-full h-11 rounded-full text-white duration-300 transition-colors"
+              id="changeId"
+            >
+              Change Password
+            </button>
+          </form>
+        </div>
+        <script th:inline="javascript">
+          const newpassword = document.getElementById("newpass");
+          const confirmpass = document.getElementById("confirmpass");
+
+          const changeId = document.getElementById("changeId");
+          changeId.style.display = "none";
+
+          confirmpass.oninput = (e) => {
+            if (newpassword.value === e.target.value) {
+              changeId.removeAttribute("disabled");
+              changeId.style.display = "block";
+              changeId.classList.add(
+                "bg-darknavi",
+                "hover:bg-navi",
+                "cursor-pointer"
+              );
+              changeId.classList.remove(
+                "bg-red-500",
+                "hover:bg-red-800",
+                "cursor-not-allowed"
+              );
+            } else {
+              changeId.setAttribute("disabled", "true");
+              changeId.style.display = "none";
+              changeId.classList.add(
+                "bg-red-500",
+                "hover:bg-red-800",
+                "cursor-not-allowed"
+              );
+              changeId.classList.remove(
+                "bg-darknavi",
+                "hover:bg-navi",
+                "cursor-pointer"
+              );
+            }
+          };
+        </script>
+      </th:block>
+    </section>
+  </body>
+</html>

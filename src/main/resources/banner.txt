@@ -1,0 +1,6 @@
+╔═══════════════════════════════════════════════╗
+║           Weariva Ecommerce Website           ║
+║       Powered by Spring Boot & Java 23        ║
+║                                               ║                                               
+║      Start your digital fashion journey       ║
+╚═══════════════════════════════════════════════╝

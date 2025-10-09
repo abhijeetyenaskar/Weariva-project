@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="relative p-5 select-none">
+      <div class="p-5 z-30">
+        <div
+          class="flex justify-between items-center pr-5 border-b border-stone-600"
+        >
+          <h1 class="text-4xl"><span class="text-navi">Add</span> Product</h1>
+          <p id="message" class="text-stone-600 tracking-in-expand"></p>
+        </div>
+
+        <form
+          class="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2"
+          id="formdata"
+          th:object="${editProducts}"
+        >
+          <div class="p-2">
+            <div
+              class="flex justify-center items-center flex-col gap-1 rounded-lg mb-2"
+            >
+              <label
+                for="image"
+                class="w-96 h-80 relative shadow p-2 bg-navi group cursor-pointer"
+              >
+                <img
+                  th:src="*{imageUrl}"
+                  class="w-full h-full object-cover"
+                  id="show"
+                  alt=""
+                />
+                <div
+                  class="absolute bottom-0 py-3 bg-darknavi text-white right-0 group-active:scale-95 left-0 text-center"
+                >
+                  Change Image
+                </div>
+              </label>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                class="px-3 bg-transparent text-sm focus:outline-none"
+                hidden
+              />
+            </div>
+
+            <script>
+              const image = document.getElementById("image");
+              const show = document.getElementById("show");
+              image.addEventListener("change", (e) => {
+                show.setAttribute(
+                  "src",
+                  URL.createObjectURL(e.target.files[0])
+                );
+              });
+            </script>
+
+            <div
+              class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+            >
+              <input
+                type="text"
+                name="name"
+                placeholder="Product Name"
+                class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                th:field="*{name}"
+                required
+              />
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 grid-0 md:gap-3">
+              <div
+                class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+              >
+                <input
+                  type="text"
+                  name="category"
+                  id="category"
+                  th:field="*{category}"
+                  placeholder="Category"
+                  class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                  required
+                />
+              </div>
+              <div
+                class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+              >
+                <input
+                  type="text"
+                  name="subcategory"
+                  th:field="*{subcategory}"
+                  id="subcategory"
+                  placeholder="Sub-Category"
+                  class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="p-2">
+            <div
+              class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+            >
+              <input
+                type="text"
+                name="price"
+                th:field="*{price}"
+                placeholder="Product Price"
+                class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                required
+              />
+            </div>
+            <div
+              class="flex items-center w-full bg-transparent border border-gray-300/60 h-32 rounded-md overflow-hidden p-2 gap-2 pl-6 mt-3"
+            >
+              <textarea
+                name="description"
+                id="desc"
+                th:field="*{description}"
+                cols="3"
+                required
+                placeholder="Product Description"
+                class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+              ></textarea>
+            </div>
+
+            <th:block th:if="${sizes}">
+              <div
+                class="flex justify-evenly items-center w-full bg-transparent border border-black h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+              >
+                <label class="flex gap-3 items-center cursor-pointer relative">
+                  <input
+                    type="checkbox"
+                    th:checked="*{sizes.contains('S')? true : false}"
+                    name="size"
+                    value="S"
+                    class="hidden peer size"
+                  />
+                  <span
+                    class="w-5 h-5 border border-slate-300 rounded relative flex items-center justify-center peer-checked:border-navi"
+                  ></span>
+                  <i
+                    class="fa-solid fa-check text-sm text-navi absolute hidden peer-checked:inline left-1 top-1/2 transform -translate-y-1/2"
+                  ></i>
+
+                  <span class="text-gray-700 select-none">S</span>
+                </label>
+
+                <label class="flex gap-3 items-center cursor-pointer relative">
+                  <input
+                    type="checkbox"
+                    name="size"
+                    value="M"
+                    th:checked="*{sizes.contains('M')? true : false}"
+                    class="hidden peer size"
+                  />
+                  <span
+                    class="w-5 h-5 border border-slate-300 rounded relative flex items-center justify-center peer-checked:border-navi"
+                  ></span>
+                  <i
+                    class="fa-solid fa-check text-sm text-navi absolute hidden peer-checked:inline left-1 top-1/2 transform -translate-y-1/2"
+                  ></i>
+
+                  <span class="text-gray-700 select-none">M</span>
+                </label>
+                <label class="flex gap-3 items-center cursor-pointer relative">
+                  <input
+                    type="checkbox"
+                    name="size"
+                    th:checked="*{sizes.contains('L')? true : false}"
+                    value="L"
+                    class="hidden peer size"
+                  />
+                  <span
+                    class="w-5 h-5 border border-slate-300 rounded relative flex items-center justify-center peer-checked:border-navi"
+                  ></span>
+                  <i
+                    class="fa-solid fa-check text-sm text-navi absolute hidden peer-checked:inline left-1 top-1/2 transform -translate-y-1/2"
+                  ></i>
+
+                  <span class="text-gray-700 select-none">L</span>
+                </label>
+                <label class="flex gap-3 items-center cursor-pointer relative">
+                  <input
+                    type="checkbox"
+                    name="size"
+                    th:checked="*{sizes.contains('XL')? true : false}"
+                    value="XL"
+                    class="hidden peer size"
+                  />
+                  <span
+                    class="w-5 h-5 border border-slate-300 rounded relative flex items-center justify-center peer-checked:border-navi"
+                  ></span>
+                  <i
+                    class="fa-solid fa-check text-sm text-navi absolute hidden peer-checked:inline left-1 top-1/2 transform -translate-y-1/2"
+                  ></i>
+
+                  <span class="text-gray-700 select-none">XL</span>
+                </label>
+                <label class="flex gap-3 items-center cursor-pointer relative">
+                  <input
+                    type="checkbox"
+                    name="size"
+                    th:checked="*{sizes.contains('XXL')? true : false}"
+                    value="XXL"
+                    class="hidden peer size"
+                  />
+                  <span
+                    class="w-5 h-5 border border-slate-300 rounded relative flex items-center justify-center peer-checked:border-navi"
+                  ></span>
+                  <i
+                    class="fa-solid fa-check text-sm text-navi absolute hidden peer-checked:inline left-1 top-1/2 transform -translate-y-1/2"
+                  ></i>
+
+                  <span class="text-gray-700 select-none">XXL</span>
+                </label>
+              </div>
+            </th:block>
+
+            <div
+              class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+            >
+              <input
+                type="text"
+                name="stock"
+                placeholder="Product Stock"
+                class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                th:field="*{stock}"
+                required
+              />
+            </div>
+
+            <div
+              class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 mt-3 rounded-full overflow-hidden pl-6 gap-2"
+            >
+              <input
+                type="text"
+                name="discount"
+                placeholder="Product Discount"
+                class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
+                th:field="*{discount}"
+                required
+              />
+            </div>
+            <div
+              class="flex justify-center col-span-1 md:col-span-2 items-center w-full pt-1"
+            >
+              <button
+                type="submit"
+                class="bg-darknavi py-2 rounded-full text-xl hover:bg-navi text-white hover:shadow-stone-900 duration-100 w-full mt-3"
+              >
+                Update Product
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <script th:inline="javascript">
+        const uniqueId = /*[[${uniqueid}]]*/ "";
+        async function updateProduct(formdata) {
+          const respone = await fetch(
+            `http://localhost:8080/api/admin/updateproduct/${uniqueId}`,
+            {
+              method: "POST",
+              credentials: "include",
+              body: formdata,
+            }
+          );
+          const { message } = await respone.json();
+          document.getElementById("message").innerText = message;
+        }
+
+        const form = document.getElementById("formdata");
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const sizes = Array.from(
+            document.querySelectorAll(".size:checked")
+          ).map((item) => item.value);
+
+          const formData = new FormData();
+          formData.append("name", form.name.value);
+          formData.append("category", form.category.value);
+          formData.append("subcategory", form.subcategory.value);
+          formData.append("sizes", sizes);
+          formData.append("description", form.description.value);
+          formData.append("stock", form.stock.value);
+          formData.append("discount", form.discount.value);
+          formData.append("price", form.price.value);
+          const image = document.getElementById("image").files[0];
+          formData.append("image", image);
+
+          if (image !== undefined) {
+            updateProduct(formData);
+            const eventSource = new EventSource(
+              0`http://localhost:8080/api/admin/sse-uploadimage/${uniqueId}`,
+              { withCredentials: true }
+            );
+            eventSource.addEventListener("image", (event) => {
+              document.getElementById("message").innerText = event.data;
+            });
+
+            eventSource.addEventListener("data", (event) => {
+              document.getElementById("message").innerText = event.data;
+              location.reload();
+            });
+
+            eventSource.onerror = (e) => {
+              eventSource.close();
+            };
+          } else {
+            console.log("Executing...");
+            updateProduct(formData);
+            setTimeout(() => {
+              window.location.assign(
+                `/productdetails/${editProducts.productId}`
+              );
+            }, 3000);
+          }
+        });
+      </script>
+    </section>
+  </body>
+</html>

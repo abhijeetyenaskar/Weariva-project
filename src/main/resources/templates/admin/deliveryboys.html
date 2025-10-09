@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delivery Boy</title>
+  </head>
+  <body>
+    <section class="relative">
+      <div class="gap-5 bg-white/30 backdrop-blur-md py-5">
+        <button
+          class="absolute top-0 right-4 border z-40 px-5 py-0.5 bg-darknavi hover:bg-navi rounded-full text-white text-xs active:scale-95"
+          id="appear-form-btn"
+        >
+          Add Delivery Boy
+        </button>
+        <p
+          id="adminmessage"
+          class="absolute flex justify-center items-center left-0 top-0 right-0 w-0 overflow-hidden mx-auto rounded-lg bg-darknavi text-white text-center text-xs sm:text-sm text-nowrap h-9 transition-all duration-1000"
+        ></p>
+        <div class="relative">
+          <div
+            id="delivery-form"
+            class="bg-white right-0 rounded-lg min-h-[80vh] top-5 py-10 backdrop-blur-md z-30 absolute w-0 flex overflow-hidden flex-col items-center justify-center transition-all duration-500 text-nowrap"
+          >
+            <form
+              id="deliveryadd"
+              class="w-[95%] md:w-[70%] flex flex-col items-center justify-center"
+            >
+              <h2
+                class="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-darknavi font-medium first-letter:text-navi"
+              >
+                Weariva Delivery Boy
+              </h2>
+              <p
+                id="message"
+                class="absolute top-2 right-3 tracking-in-expand text-stone-500"
+              ></p>
+
+              <div class="grid grid-cols-2 w-full gap-3 mt-3">
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Name"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                    required
+                  />
+                </div>
+
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 w-full gap-3">
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                    required
+                  />
+                </div>
+                <div
+                  class="flex items-center mt-2 w-full bg-transparent border border-stone-600/60 h-12 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 w-full gap-3">
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="number"
+                    name="phone"
+                    maxlength="10"
+                    placeholder="Phone Number"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                    required
+                  />
+                </div>
+                <div
+                  class="flex items-center mt-2 w-full bg-transparent border border-stone-600/60 h-12 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <select
+                    name="gender"
+                    id="gender"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full cursor-pointer"
+                  >
+                    <option value="No Selected" selected>Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 w-full gap-3">
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="text"
+                    required
+                    id="city"
+                    placeholder="City"
+                    name="city"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                  />
+                </div>
+
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="text"
+                    required
+                    id="state"
+                    placeholder="State"
+                    name="state"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                  />
+                </div>
+                <div
+                  class="flex items-center w-full bg-transparent border border-stone-600/60 h-12 mt-2 rounded-full overflow-hidden px-4 gap-2"
+                >
+                  <input
+                    type="text"
+                    required
+                    id="pin"
+                    placeholder="PinCode"
+                    name="pin"
+                    class="bg-transparent text-stone-800/80 placeholder-stone-800/80 outline-none text-sm w-full h-full"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="mt-3 w-full h-11 rounded-full text-white bg-darknavi hover:bg-navi duration-300 transition-colors"
+              >
+                Add Delivery Boy
+              </button>
+            </form>
+          </div>
+          <div class="px-5 py-2">
+            <h2 class="text-3xl my-2">All Delivery Boys</h2>
+
+            <ul th:if="${deliveryboys}" id="delivery-ulist">
+              <li
+                th:each="delivery,s:${deliveryboys}"
+                th:id="'delivery-record-'+${delivery.userId}"
+                class="delivery-boys-list relative outline mb-2 shadow flex justify-between items-center text-xs rounded-lg p-1 px-5"
+                th:classappend="${delivery.userActive ? 'outline-darknavi':'outline-red-500'}"
+              >
+                <div
+                  class="absolute top-[50%] translate-y-[-50%] -left-2.5 rounded-full w-5 h-5 bg-darknavi"
+                ></div>
+                <div
+                  class="absolute top-[50%] translate-y-[-50%] -left-1.5 rounded-full w-3 h-3 bg-white"
+                ></div>
+                <div class="flex-1">
+                  <p>
+                    <span class="text-lg"> [[${delivery.name}]] </span>
+                    <span class="text-xs mb-1 inline-block"
+                      >([[${delivery.email}]])</span
+                    >
+                  </p>
+                  <p class="">[[${delivery.phone}]]</p>
+                </div>
+                <div class="flex-1 text-right">
+                  <p>[[${delivery.city}]]</p>
+                  <p>[[${delivery.state}]]</p>
+                </div>
+                <div class="flex-1 text-right">
+                  <button
+                    th:id="'delivery-boy-status-'+${delivery.userId}"
+                    class="px-3 py-0.5 rounded-full text-white bg-darknavi hover:bg-navi hover:scale-105 transition-all duration-300"
+                  >
+                    [[${!delivery.userActive ? " Active":"Inactive"}]]
+                  </button>
+                  <button
+                    th:id="'delivery-boy-delete-'+${delivery.userId}"
+                    class="px-3 py-0.5 rounded-full text-white bg-darknavi hover:bg-navi hover:scale-105 transition-all duration-300"
+                  >
+                    Delete
+                  </button>
+                </div>
+                <!-- <script th:inline="javascript">
+                  document.getElementById(
+                    "delivery-boy-status-[[${delivery.userId}]]"
+                  ).onclick = (e) => {
+                    activeStatus(
+                      /*[[${delivery.userId}]]*/ 0,
+                      "delivery-boy-status-[[${delivery.userId}]]",
+                      "delivery-record-[[${delivery.userId}]]"
+                    );
+                    console.log(e.target.innerText);
+                  };
+
+                  document.getElementById(
+                    "delivery-boy-delete-[[${delivery.userId}]]"
+                  ).onclick = (e) => {
+                    deleteBoy(
+                      /*[[${delivery.userId}]]*/ 0,
+                      "delivery-record-[[${delivery.userId}]]"
+                    );
+                  };
+                </script> -->
+              </li>
+            </ul>
+
+            <div th:unless="${deliveryboys}">
+              <h2>No Delivery Boys Found</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          console.log("Data loaded");
+          async function deleteBoy(deliveryBoyId) {
+            try {
+              const deliveryForm = new FormData();
+              deliveryForm.append("deliverBoyId", deliveryBoyId);
+              const response = await fetch(
+                "http://localhost:8080/api/admin/delete-delivery-boy",
+                {
+                  method: "POST",
+                  body: deliveryForm,
+                  credentials: "include",
+                }
+              );
+              const { flag, message } = await response.json();
+              const messageDom = document.getElementById("adminmessage");
+              if (flag) {
+                document
+                  .getElementById(`delivery-record-${deliveryBoyId}`)
+                  .remove();
+                messageDom.innerText = message;
+                messageDom.classList.toggle("w-0");
+                messageDom.classList.toggle("w-[60%]");
+                setTimeout(() => {
+                  messageDom.innerText = "";
+                  messageDom.classList.toggle("w-[60%]");
+                  messageDom.classList.toggle("w-0");
+                }, 2000);
+              } else {
+                throw new Error(message);
+              }
+            } catch (error) {
+              const messageDom = document.getElementById("adminmessage");
+
+              messageDom.innerText = error?.message;
+              messageDom.classList.toggle("w-[60%]");
+              setTimeout(() => {
+                messageDom.innerText = "";
+                messageDom.classList.toggle("w-0");
+              }, 2000);
+            }
+          }
+
+          async function activeStatus(deliveryBoyId) {
+            try {
+              const deliveryForm = new FormData();
+              deliveryForm.append("deliverBoyId", deliveryBoyId);
+              const response = await fetch(
+                "http://localhost:8080/api/admin/status-delivery-boy",
+                {
+                  method: "POST",
+                  body: deliveryForm,
+                  credentials: "include",
+                }
+              );
+              const { flag, message } = await response.json();
+              const messageDom = document.getElementById("adminmessage");
+              if (flag) {
+                const activeStatusDom = document.getElementById(
+                  `delivery-boy-status-${deliveryBoyId}`
+                );
+                activeStatusDom.innerText =
+                  activeStatusDom.innerText === "Active"
+                    ? "Inactive"
+                    : "Active";
+                const deliveryRecordDom = document.getElementById(
+                  `delivery-record-${deliveryBoyId}`
+                );
+                deliveryRecordDom.style.outlineColor =
+                  activeStatusDom.innerText === "Active" ? "#f00" : "#001A38";
+                messageDom.innerText = `Delivery Boy Id : ${deliveryBoyId} Status Changed`;
+                messageDom.classList.toggle("w-0");
+                messageDom.classList.toggle("w-[60%]");
+                setTimeout(() => {
+                  messageDom.innerText = "";
+                  messageDom.classList.toggle("w-[60%]");
+                  messageDom.classList.toggle("w-0");
+                }, 1000);
+              } else {
+                throw new Error(message);
+              }
+            } catch (error) {
+              const messageDom = document.getElementById("adminmessage");
+              messageDom.innerText = error?.message;
+              messageDom.classList.toggle("w-[60%]");
+              messageDom.classList.toggle("w-0");
+              setTimeout(() => {
+                messageDom.innerText = "";
+                messageDom.classList.toggle("w-[60%]");
+                messageDom.classList.toggle("w-0");
+              }, 2000);
+            }
+          }
+
+          let deliveryBoyLists = document.querySelectorAll(
+            ".delivery-boys-list"
+          );
+
+          for (const element of deliveryBoyLists) {
+            const profile = element.id.substring(
+              element.id.lastIndexOf("-") + 1
+            );
+            element.children[4].children[0].onclick = (e) => {
+              activeStatus(profile);
+            };
+            element.children[4].children[1].onclick = (e) => {
+              deleteBoy(profile);
+            };
+          }
+
+          const deliveryForm = document.getElementById("delivery-form");
+          const appearFormBtn = document.getElementById("appear-form-btn");
+          appearFormBtn.onclick = (e) => {
+            deliveryForm.classList.toggle("w-full");
+          };
+
+          function createDeliveryBoy(delivery, id) {
+            // <li>
+            let li = document.createElement("li");
+            li.id = `delivery-record-${id}`;
+            li.className =
+              "relative outline mb-2 shadow flex justify-between items-center text-xs rounded-lg p-1 px-5 outline-darknavi";
+            let absoluteOne = document.createElement("div");
+            absoluteOne.className =
+              "absolute top-[50%] translate-y-[-50%] -left-2.5 rounded-full w-5 h-5 bg-darknavi";
+
+            let absoluteTwo = document.createElement("div");
+            absoluteTwo.className =
+              "absolute top-[50%] translate-y-[-50%] -left-1.5 rounded-full w-3 h-3 bg-white";
+
+            // <div> with name, email, phone
+            let div1 = document.createElement("div");
+            div1.className = "flex-1";
+
+            let p1 = document.createElement("p");
+            let spanName = document.createElement("span");
+            spanName.className = "text-lg";
+            spanName.textContent = delivery?.name;
+
+            let spanEmail = document.createElement("span");
+            spanEmail.className = "text-xs mb-1 inline-block";
+            spanEmail.textContent = delivery?.email;
+
+            p1.append(spanName, " ", spanEmail);
+
+            let p2 = document.createElement("p");
+            p2.textContent = delivery?.phone;
+
+            div1.append(p1, p2);
+
+            // <div> with city, state
+            let div2 = document.createElement("div");
+            div2.className = "flex-1 text-right";
+
+            let pCity = document.createElement("p");
+            pCity.textContent = delivery.city;
+
+            let pState = document.createElement("p");
+            pState.textContent = delivery.state;
+
+            div2.append(pCity, pState);
+
+            // <div> with active status
+            let div3 = document.createElement("div");
+            div3.className = "flex-1 text-right";
+
+            const activeDom = document.createElement("button");
+            activeDom.id = `delivery-boy-status-${id}`;
+            activeDom.className =
+              "px-3 py-0.5 rounded-full mr-0.5 text-white bg-darknavi hover:bg-navi hover:scale-105 transition-all duration-300";
+            activeDom.textContent = "Inactive";
+            activeDom.onclick = (e) => activeStatus(id);
+
+            const deleteDom = document.createElement("button");
+            deleteDom.onclick = (e) => deleteBoy(id);
+            deleteDom.id = `delivery-boy-delete-${id}`;
+            deleteDom.className =
+              "px-3 py-0.5 rounded-full text-white bg-darknavi hover:bg-navi hover:scale-105 transition-all duration-300";
+            deleteDom.textContent = "Delete";
+
+            div3.append(activeDom, deleteDom);
+
+            // Add divs into <li>
+            li.append(absoluteOne, absoluteTwo, div1, div2, div3);
+
+            return li;
+          }
+          //handling forms data
+          const form = document.getElementById("deliveryadd");
+          form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const data = {
+              name: form.name.value,
+              username: form.username.value,
+              email: form.email.value,
+              password: form.password.value,
+              phone: form.phone.value,
+              gender: form.gender.value,
+              city: form.city.value,
+              state: form.state.value,
+              pin: form.pin.value,
+            };
+
+            const response = await fetch(
+              "http://localhost:8080/api/admin/adddeliveryboy",
+              {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+              }
+            );
+            const { flag, message } = await response.json();
+            console.log(data, flag, message);
+            const messageDom = document.getElementById("adminmessage");
+            if (flag) {
+              document
+                .getElementById("delivery-ulist")
+                .appendChild(createDeliveryBoy(data, message));
+              messageDom.innerText = "Successfully Added";
+              messageDom.classList.add("w-[60%]");
+              setTimeout(() => {
+                messageDom.innerText = "";
+                messageDom.classList.remove("w-[60%]");
+              }, 2000);
+              form.reset();
+              deliveryForm.classList.remove("w-full");
+            } else {
+              messageDom.innerText = message;
+              messageDom.classList.toggle("w-[60%]");
+              setTimeout(() => {
+                messageDom.innerText = "";
+                messageDom.classList.toggle("w-0");
+              }, 2000);
+            }
+          });
+        });
+      </script>
+    </section>
+  </body>
+</html>

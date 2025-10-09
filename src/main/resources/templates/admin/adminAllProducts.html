@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="relative">
+      <p
+        class="absolute top-0 left-0 right-0 w-0 mx-auto text-nowrap overflow-hidden transition-all duration-1000"
+        id="product-delete-msg"
+      >
+        jasldfjsd
+      </p>
+      <div class="p-6 rounded-lg">
+        <div class="flex justify-between items-center border-b mb-3">
+          <h1 class="text-stone-950 text-3xl pb-1">
+            <span class="text-stone-700">All</span> Products
+          </h1>
+
+          <a
+            th:href="@{/admin/addproduct}"
+            class="text-sm rounded-full transition-all duration-150 text-center block px-5 py-1 shadow-sm bg-navi hover:bg-darknavi text-white cursor-pointer z-50"
+          >
+            Add Product</a
+          >
+        </div>
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 relative items-center mt-12 lg:mt-3 gap-4 max-w-5xl mx-auto"
+        >
+          <button
+            class="absolute -top-10 left-0 flex active:scale-100 hover:scale-105 transition-all duration-150 justify-center gap-2 text-xl shadow px-3 py-0.5 rounded-full items-center lg:hidden"
+            id="filterbtn"
+          >
+            <i class="fa-solid fa-filter text-center"></i>
+          </button>
+          <th:block th:if="${products.size > 0}">
+            <div
+              th:each="prop,c : ${products}"
+              class="admin-products relative p-2 shadow group rounded-lg overflow-hidden"
+              th:id="'admin-products-'+${prop.productId}"
+            >
+              <img
+                th:src="${prop.imageUrl}"
+                alt="image"
+                class="size-64 object-cover object-top"
+              />
+              <span
+                class="absolute flex justify-center items-center text-sm top-5 right-5 w-10 h-10 rounded-full bg-white shadow-md text-gray-950"
+              >
+                [[${prop.discount}]] <span class="text-blue-500">%</span>
+              </span>
+              <div
+                class="absolute inset-0 flex flex-col justify-end p-4 bg-white/50 opacity-0 group-hover:opacity-100 backdrop-blur-md transition-all duration-700"
+              >
+                <div class="py-2 px-3">
+                  <p class="text-sm text-stone-700 first-letter:text-black">
+                    [[${prop.name}]]
+                  </p>
+                  <p class="text-stone-500 text-xs">[[${prop.category}]]</p>
+                  <div class="gap-3">
+                    <p class="text-3xl first-letter:text-black">
+                      $ [[${ prop.discountedPrice }]]
+                      <span class="text-sm line-through text-gray-950"
+                        >$[[${ prop.price}]]</span
+                      >
+                    </p>
+                    <p>Stock : <span class="">[[${prop.stock}]]</span></p>
+                  </div>
+                  <div
+                    class="flex justify-between absolute top-2 left-2 right-2 items-center px-3 my-1"
+                  >
+                    <a
+                      th:href="@{'/admin/editproduct/'+${prop.productId}}"
+                      class="text-xs rounded-full bg-darknavi px-3 py-1 text-white hover:bg-navi duration-150"
+                      >Edit</a
+                    >
+                    <button
+                      th:id="'product-button-'+ ${prop.productId}"
+                      class="text-xs rounded-full bg-navi px-3 py-1 text-white hover:bg-darknavi duration-150"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  <a th:href="@{'/productdetails/'+${prop.productId}}"
+                    >Show more
+                  </a>
+                </div>
+              </div>
+            </div>
+            <th:block th:if="${authenticatedUser}">
+              <script>
+                async function deleteAdminProduct(productId) {
+                  try {
+                    const product = new FormData();
+                    product.append("id", productId);
+                    const response = await fetch(
+                      "http://localhost:8080/api/admin/deleteproduct",
+                      { method: "POST", body: product, credentials: "include" }
+                    );
+                    const { flag, message } = await response.json();
+                    if (flag) {
+                      document
+                        .getElementById(`admin-products-${productId}`)
+                        .remove();
+                      const msge =
+                        document.getElementById("product-delete-msg");
+                      msge.textContent = message;
+                      msge.style.width = "60%";
+                      setTimeout(() => {
+                        msge.textContent = "";
+                        msge.style.width = "0px";
+                      }, 2000);
+                    } else {
+                      throw new Error(message);
+                    }
+                  } catch (error) {
+                    const msge = document.getElementById("product-delete-msg");
+                    msge.textContent = error?.message;
+                    msge.style.width = "60%";
+                    setTimeout(() => {
+                      msge.textContent = "";
+                      msge.style.width = "0px";
+                    }, 2000);
+                  }
+                }
+
+                const list = document.querySelectorAll(".admin-products");
+                for (const element of list) {
+                  const id =
+                    element.children[2].children[0].children[3].lastElementChild
+                      .id;
+                  const productId = id.substring(id.lastIndexOf("-") + 1);
+                  element.children[2].children[0].children[3].lastElementChild.onclick =
+                    (e) => {
+                      deleteAdminProduct(productId);
+                    };
+                }
+              </script>
+            </th:block>
+          </th:block>
+        </div>
+        <th:block th:unless="${products.size > 0}">
+          <div class="px-3 text-center">
+            <h1
+              class="py-10 px-10 border-t border-b tracking-in-expand text-2xl md:text-4xl lg:text-5xl"
+            >
+              <span class="text-stone-600">No</span> Product Found
+            </h1>
+          </div>
+        </th:block>
+      </div>
+    </section>
+  </body>
+</html>

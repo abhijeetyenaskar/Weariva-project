@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="py-20">
+      <div class="p-3 bg-blue-50/10 w-[80%] md:w-[70%] lg:w-[50%] mx-auto">
+        <h3 class="text-3xl text-center mt-3 border-b border-darknavi">
+          Hello,
+          <span class="first-letter:text-blue-500">
+            [[${user.gender =="male"?"Mr.":"Mrs."}]]</span
+          >
+          [[${ user.name}]]
+        </h3>
+        <div class="mx-auto py-3 px-3">
+          <p class="text-center text-md">
+            To Reset your Account's Password, OTP will be sent to provided ways
+            :
+          </p>
+          <p class="text-center text-sm text-gray-700 mt-1">
+            Select One of the below Mentioned way :
+          </p>
+          <form action="/sendOTP" method="POST" class="w-[80%] mx-auto">
+            <div class="mt-2">
+              <input
+                type="radio"
+                class="chooose hidden peer accent-blue-900"
+                id="email"
+                name="choose"
+                th:value="${user.email}"
+                onclick="checkInputRadio()"
+              />
+              <label
+                for="email"
+                id="email-label"
+                class="peer-checked:shadow-md peer-checked:rounded-full transition-all cursor-pointer peer-checked:bg-navi peer-checked:text-white border-b py-2 px-3 w-full block"
+                >[[${user.email}]]</label
+              >
+            </div>
+            <div class="mt-2">
+              <input
+                type="radio"
+                class="border peer chooose hidden accent-blue-900"
+                id="phone"
+                th:value="${user.phone}"
+                name="choose"
+                onclick="checkInputRadio()"
+              />
+              <label
+                for="phone"
+                id="phone-label"
+                class="peer-checked:shadow-md peer-checked:rounded-full transition-all cursor-pointer peer-checked:bg-navi peer-checked:text-white py-2 px-3 w-full border-b block"
+                >[[${user.phone}]]</label
+              >
+            </div>
+            <button
+              type="submit"
+              id="myotpsubmit"
+              class="py-1 px-3 mt-2 block rounded-full text-md hover:shadow-md bg-darknavi hover:bg-darknavi/50 text-white duration-500"
+            >
+              Send OTP
+            </button>
+          </form>
+        </div>
+      </div>
+      <script th:inline="javasript">
+        function customizeString(data = "xxxx") {
+          let str = "";
+          let lengthString = data.includes("@")
+            ? data.indexOf("@")
+            : data.length - 3;
+          for (let index = 0; index < lengthString; index++) {
+            str = str.concat("&#9733;");
+          }
+          return str.concat(data.substring(lengthString));
+        }
+
+        const inputchecks = document.querySelectorAll(".chooose");
+        const sentotp = document.getElementById("myotpsubmit");
+        if (sentotp) {
+          sentotp.style.cursor = "not-allowed";
+          sentotp.classList.add("bg-red-200", "hover:bg-red-400");
+          sentotp.setAttribute("disabled", true);
+        }
+
+        function checkInputRadio() {
+          if (inputchecks) {
+            for (let index = 0; index < inputchecks.length; index++) {
+              if (inputchecks.item(index).checked) {
+                sentotp.classList.remove("bg-red-200", "hover:bg-red-400");
+                sentotp.classList.add("bg-blue-200", "hover:bg-blue-400");
+                sentotp.style.cursor = "pointer";
+                sentotp.removeAttribute("disabled");
+              }
+            }
+          }
+        }
+
+        // to hide phone and email Label.
+        const phone = document.getElementById("phone-label");
+        const email = document.getElementById("email-label");
+        if (phone && email) {
+          phone.innerHTML = customizeString(phone.innerHTML);
+          email.innerHTML = customizeString(email.innerHTML);
+        }
+      </script>
+    </section>
+  </body>
+</html>

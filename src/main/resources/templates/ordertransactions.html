@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin</title>
+  </head>
+  <body>
+    <section class="py-3 px-10">
+      <div class="">
+        <h1 class="text-4xl border-b border-darknavi mb-2 text-darknavi">Order Transactions</h1>
+        <div class="overflow-x-auto bg-white rounded-md">
+          <th:block th:if="${orderTransactions.size() > 0}">
+            <table class="min-w-full text-xs text-left border">
+              <thead
+                class="text-white bg-darknavi text-nowrap rounded-full overflow-hidden"
+              >
+                <tr>
+                  <th class="px-4 py-2 border border-darknavi">Order ID</th>
+                  <th class="px-4 py-2 border border-darknavi">Customer</th>
+                  <th class="px-4 py-2 border border-darknavi">Date</th>
+                  <th class="px-4 py-2 border border-darknavi">
+                    Payment Status
+                  </th>
+                  <th class="px-4 py-2 border border-darknavi">Order Status</th>
+                  <th class="px-4 py-2 border border-darknavi">Total Amount</th>
+                  <th class="px-4 py-2 border border-darknavi text-center">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  th:each="order,s : ${orderTransactions}"
+                  class="hover:bg-gray-50 text-nowrap"
+                >
+                  <td class="px-4 py-2" th:text="${s.index + 1}"></td>
+                  <td class="px-4 py-2" th:text="${order.user?.name}"></td>
+                  <td
+                    class="px-4 py-2"
+                    th:text="${#temporals.format(order.orderDate, 'dd-MM-yyyy HH:mm')}"
+                  ></td>
+
+                  <!-- Payment Status with color -->
+                  <td class="px-4 py-2">
+                    <span
+                      th:text="${order.paymentStatus}"
+                      th:classappend="${ order.paymentStatus.toString().equals('PAYMENT_AWAITING') ? 'text-blue-600 font-semibold' : order.paymentStatus.toString().equals('PAID') ? 'text-green-600 font-semibold' 
+                      : (order.paymentStatus.toString().equals('PAYMENT_FAILED') ? 'text-yellow-600 font-semibold' : order.paymentStatus.toString().equals('REFUNDED')? 'text-purple-600 font-semibold' 
+                      : 'text-red-600 font-semibold')}"
+                    >
+                    </span>
+                  </td>
+
+                  <!-- Order Status -->
+                  <td class="px-4 py-2" th:text="${order.orderStatus}"></td>
+
+                  <td
+                    class="px-4 py-2 font-bold text-gray-800"
+                    th:text="'₹ ' + ${order.totalOrderAmount}"
+                  ></td>
+
+                  <!-- Actions -->
+                  <th:block th:if="${authenticatedUser}">
+                    <td class="p-2 text-center">
+                      <a
+                        th:href="@{${authenticatedUser.roles.equals('ADMIN')?'/admin':'/user'} +'/view-order/'+${order.orderId}}"
+                        class="w-full block bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded mr-2"
+                      >
+                        View
+                      </a>
+                    </td>
+                  </th:block>
+                </tr>
+              </tbody>
+            </table>
+          </th:block>
+          <th:block th:unless="${orderTransactions.size() > 0}">
+            <div>
+              <p class="w-full py-10 text-center tracking-in-expand text-3xl">No Transactions Found</p>
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

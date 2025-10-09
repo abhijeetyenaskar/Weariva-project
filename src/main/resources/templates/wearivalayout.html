@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:fragment="layout(content)"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weariva Ecommerce</title>
+    <link
+      rel="shortcut icon"
+      th:href="@{/images/favicon.png}"
+      type="image/x-icon"
+    />
+    <!-- font-awesome cdn link -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- tailwind css link -->
+    <link rel="stylesheet" href="" data-th-href="@{/css/output.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="relative select-none bg-white scroll-smooth">
+    <th:block th:if="${authenticatedUser != null}">
+      <th:block th:if="${authenticatedUser.roles == 'ADMIN'}">
+        <div
+          id="notifications"
+          class="z-[10000] fixed bottom-3 rounded-lg flex flex-col items-end text-nowrap right-5 p-2 px-5"
+        ></div>
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const eventSource = new EventSource(
+              "/api/admin/dashboard-stream-data"
+            );
+
+            eventSource.addEventListener("order", function (event) {
+              const message = event.data;
+              const notificationArea = document.getElementById("notifications");
+
+              // show in UI
+              const div = document.createElement("div");
+              div.setAttribute("id", "order-" + message);
+              div.className =
+                "outline px-5 py-1 relative right-0   text-xs w-0 -translate-y-1 transition-all duration-1000 tracking-wider font-extralight outline-white rounded-full bg-darknavi text-white";
+              div.textContent = "Order No. Received : " + message;
+
+              notificationArea.prepend(div);
+              // Optional sound alert
+              const audio = new Audio("/sounds/notifications.wav");
+              audio.play();
+
+              const notificationDom = document.getElementById(
+                "order-" + message
+              );
+
+              if (notificationDom != null) {
+                notificationDom.style.width = "0px";
+                notificationDom.style.width = "100%";
+                notificationDom.style.padding = "5px";
+                notificationDom.classList.add("tracking-in-expand");
+                setTimeout(() => {
+                  notificationDom.textContent = "";
+                  notificationDom.style.width = "0px";
+                  setTimeout(() => {
+                    notificationDom.remove();
+                  }, 500);
+                }, 3000);
+              }
+            });
+            eventSource.onerror = (e) => {
+              console.log("SSE connection lost, reconnecting...");
+              eventSource.close();
+              setTimeout(() => {
+                location.reload();
+              }, 3000);
+            };
+          });
+        </script>
+      </th:block>
+    </th:block>
+    <main class="relative px-8 p-2">
+      <th:block
+        th:unless="${login == true || signup == true || forget == true}"
+      >
+        <nav
+          class="relative backdrop-blur-lg py-4 rounded-md duration-700 select-none z-[5000]"
+        >
+          <div class="mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="relative flex h-12 items-center justify-between">
+              <!-- Mobile menu button-->
+              <div class="flex flex-1 items-center justify-start">
+                <div class="flex items-center relative">
+                  <a th:href="@{/}" class="text-black text-4xl pt-2">
+                    <p class="md:block hidden">
+                      Weariva
+                      <span class="text-sm"
+                        >[[${ authenticatedUser != null &&
+                        authenticatedUser.roles == "ADMIN" ? "Admin Panel" :""
+                        }]]</span
+                      >
+                    </p>
+                    <div class="flex md:hidden text-xs items-center">
+                      <img
+                        th:src="@{/images/logo.png}"
+                        class="w-14 h-14 fade-in"
+                        alt=""
+                      />
+                      <div class="relative">
+                        <p class="text-lg p-0">
+                          Weariva [[${ authenticatedUser != null &&
+                          authenticatedUser.roles == "ADMIN" ? "Admin Panel" :""
+                          }]]
+                        </p>
+                        <p class="absolute text-nowrap -bottom-2">
+                          Clothes & Accessories
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div
+                class="inset-y-0 right-0 flex gap-2 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+              >
+                <a
+                  th:href="@{'/products'}"
+                  class="adminlinks block rounded-md text-black hover:text-gray-500 px-5 duration-300 pt-1 pb-0.5 text-xs md:text-sm"
+                  aria-current="page"
+                >
+                  Shop
+                </a>
+
+                <th:block th:if="${authenticatedUser}">
+                  <!-- Profile dropdown -->
+                  <div class="relative mx-5">
+                    <div>
+                      <button
+                        type="button"
+                        class="relative text-2xl bg-white rounded-full w-12 h-12 focus:outline-none flex text-black justify-center items-center p-1 border shadow-md z-[1000]"
+                        id="user-menu-button"
+                      >
+                        <img
+                          th:src="@{'/images/uploads/profiles/profile.png'}"
+                          alt=""
+                          class="w-full h-full object-cover rounded-full fade-in"
+                        />
+                      </button>
+                    </div>
+                    <div
+                      class="flex fixed flex-col justify-center items-center rounded-md bg-white z-50 top-20 overflow-hidden w-72 h-0 border-black right-0 duration-500 transition-all shadow"
+                      role="menu"
+                      id="user-menu-bar"
+                      aria-labelledby="user-menu-button"
+                      tabindex="-1"
+                    >
+                      <div
+                        class="flex justify-center flex-col items-center gap-2 mb-3 drop-shadow-[0_0_5px_rgba(16, 185,129,0.6)]"
+                      >
+                        <img
+                          th:src="@{'/images/uploads/profiles/profile.png'}"
+                          alt=""
+                          class="p-3 w-32 h-32 border rounded-full border-gray-500 bg-white"
+                        />
+                        <div class="text-center">
+                          <a
+                            th:href="@{${authenticatedUser.roles == 'ADMIN' ? '/admin' : '/'}}"
+                            class="text-xl text-stone-800 first-letter:text-stone-300"
+                          >
+                            [[${authenticatedUser.gender ==
+                            'male'?"Mr.":"Mrs."}]] [[${authenticatedUser.name}]]
+                          </a>
+                          <p class="text-xs text-stone-600">
+                            [[${authenticatedUser.email}]]
+                          </p>
+                        </div>
+                      </div>
+
+                      <th:block th:if="${authenticatedUser.roles == 'USER'}">
+                        <div class="relative">
+                          <th:block th:if="${cartCount > 0}">
+                            <span
+                              class="absolute top-[50%] translate-y-[-50%] -right-5 z-40 bg-gray-400 bottom-0 text-xs rounded-full text-center w-7 h-7 flex hover:text-black items-center justify-center"
+                              >[[${cartCount}]]</span
+                            >
+                            <span
+                              class="absolute top-[50%] translate-y-[-50%] -right-5 text-xs rounded-full border border-black w-2 z-50 h-2 text-center bg-gray-900 animate-ping"
+                            ></span>
+                          </th:block>
+
+                          <a
+                            th:href="@{/user/cartdata}"
+                            class="duration-500 border-b text-center hover:font-bold block px-4 py-2 text-sm text-gray-700"
+                          >
+                            Cart
+                            <span id="cart-count" class="hidden">0</span>
+                          </a>
+                        </div>
+                      </th:block>
+
+                      <a
+                        th:href="@{${authenticatedUser.roles == 'ADMIN' ? '/admin/profiledetails' : authenticatedUser.roles == 'USER'? '/user/profiledetails' :'/boy/profiledetails'}}"
+                        class="duration-500 border-b text-center hover:font-bold block px-4 py-2 text-sm text-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="user-menu-item-0"
+                        >Profile</a
+                      >
+
+                      <a
+                        th:href="@{${authenticatedUser.roles == 'ADMIN' ? '/admin/allorders' : authenticatedUser.roles =='USER'? '/user/myorders':'/boy/myorders'}}"
+                        class="duration-500 border-b text-center hover:font-bold block px-4 py-2 text-sm text-gray-700"
+                        tabindex="-1"
+                        >My Orders</a
+                      >
+
+                      <a
+                        th:if="${authenticatedUser.roles =='USER'}"
+                        th:href="@{/user/view-order-transactions}"
+                        class="duration-500 border-b text-center hover:font-bold block px-4 py-2 text-sm text-gray-700"
+                        tabindex="-1"
+                        >Order Transactions</a
+                      >
+
+                      <a
+                        th:href="@{${authenticatedUser.roles == 'ADMIN' ? '/admin/signout' :authenticatedUser.roles == 'USER' ? '/user/signout'  :'/logout'}}"
+                        class="duration-500 border-b text-center hover:font-bold block px-4 py-2 text-sm text-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="user-menu-item-2"
+                        >Logout</a
+                      >
+                    </div>
+                  </div>
+                </th:block>
+
+                <th:block th:if="${authenticatedUser}">
+                  <div
+                    class="inset-y-0 left-0 flex items-center"
+                    th:if="${authenticatedUser.roles =='ADMIN'}"
+                  >
+                    <button
+                      type="button"
+                      class="border relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 focus:outline-none hover:text-black duration-300 shadow-sm"
+                      id="menubar"
+                    >
+                      <i class="fa-solid fa-bars"></i>
+                    </button>
+                  </div>
+                </th:block>
+                <th:block th:unless="${authenticatedUser}">
+                  <div
+                    class="relative group overflow-hidden bg-lighnavi hover:bg-darknavi rounded-md active:scale-100 hover:scale-105 transition-all duration-300"
+                  >
+                    <a
+                      th:href="@{'/signin'}"
+                      class="text-white text-xs md:text-sm h-full w-full px-3 md:px-5 py-1 rounded flex items-center justify-center"
+                    >
+                      Login
+                    </a>
+                    <div
+                      class="absolute -bottom-12 group-hover:-bottom-10 transition-all duration-300 left-1/2 -z-10 -translate-x-1/2 blur size-14 rounded-full bg-lighnavi"
+                    ></div>
+                  </div>
+                </th:block>
+              </div>
+            </div>
+          </div>
+        </nav>
+        <th:block th:if="${authenticatedUser}">
+          <th:block th:if="${authenticatedUser.roles == 'ADMIN'}">
+            <div
+              class="z-50 absolute top-22 overflow-hidden bg-white h-[85vh] right-3 w-0 p-0 rounded-lg shadow-md duration-500"
+              id="menusidebar"
+            >
+              <div
+                class="flex text-sm flex-col justify-center items-center text-nowrap"
+              >
+                <h2
+                  class="text-3xl first-letter:text-navi border-b border-white"
+                >
+                  Weariva
+                </h2>
+                <p>Clotings & Accessories</p>
+              </div>
+              <hr />
+              <div class="space-y-1 px-2 pb-3 pt-2">
+                <a
+                  th:href="@{/admin}"
+                  class="mt-2 text-xs rounded-md w-full px-5 inline-block py-1 border border-stone-300 shadow hover:scale-[1.02] active:scale-100 duration-300 hover:bg-stone-200 text-nowrap hover:border-stone-800"
+                  aria-current="page"
+                  >Dashboard</a
+                >
+                <a
+                  th:href="@{/admin/allproducts}"
+                  class="mt-2 text-xs rounded-md w-full px-5 inline-block py-1 border border-stone-300 shadow hover:scale-[1.02] active:scale-100 duration-300 hover:bg-stone-200 text-nowrap hover:border-stone-800"
+                  >Products</a
+                >
+                <h3
+                  class="text-sm text-nowrap border-b py-0.5 bg-darknavi rounded-lg text-white px-3"
+                >
+                  Order Management
+                </h3>
+                <a
+                  th:href="@{/admin/allorders}"
+                  class="mt-2 text-xs rounded-md w-full px-5 inline-block py-1 border border-stone-300 shadow hover:scale-[1.02] active:scale-100 duration-300 hover:bg-stone-200 text-nowrap hover:border-stone-800"
+                  >Orders</a
+                >
+
+                <a
+                  th:href="@{/admin/order-transactions}"
+                  class="mt-2 text-xs rounded-md w-full px-5 inline-block py-1 border border-stone-300 shadow hover:scale-[1.02] active:scale-100 duration-300 hover:bg-stone-200 text-nowrap hover:border-stone-800"
+                  >Order Transactions</a
+                >
+
+                <h3
+                  class="border-b text-nowrap text-sm py-0.5 bg-darknavi rounded-lg text-white px-3"
+                >
+                  Profile Management
+                </h3>
+                <a
+                  th:href="@{/admin/addadmin}"
+                  class="mt-2 text-xs rounded-md w-full px-5 inline-block py-1 border border-stone-300 shadow hover:scale-[1.02] active:scale-100 duration-300 text-nowrap hover:bg-stone-200 hover:border-stone-800"
+                  >Admin</a
+                >
+
+                <a
+                  th:href="@{/admin/deliveryboys}"
+                  class="mt-2 text-xs rounded-md w-full px-5 text-nowrap inline-block py-1 border border-stone-300 shadow hover:scale-[1.02] active:scale-100 duration-300 hover:bg-stone-200 hover:border-stone-800"
+                  >Delivery Boys</a
+                >
+              </div>
+            </div>
+          </th:block>
+        </th:block>
+      </th:block>
+
+      <section th:replace="${content}"></section>
+
+      <th:block
+        th:unless="${login == true || signup == true || forget == true}"
+      >
+        <footer
+          class="flex flex-col items-center justify-center w-full py-10 bg-gradient-to-b from-darknavi to-navi text-white rounded-lg"
+        >
+          <h1 class="text-6xl">Weariva</h1>
+          <p class="text-white/50">Clothings & Accessories</p>
+          <p class="h-px w-[50%] bg-stone-500"></p>
+
+          <div class="flex items-center gap-4 mt-5">
+            <a
+              href="#"
+              class="hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <i class="fa-brands fa-facebook-f"></i>
+            </a>
+            <a
+              href="#"
+              class="hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+
+            <a
+              href="#"
+              class="hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <i class="fa-brands fa-twitter"></i>
+            </a>
+            <a
+              href="#"
+              class="hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <i class="fa-brands fa-whatsapp"></i>
+            </a>
+          </div>
+          <div class="my-3 text-xs">
+            <a
+              class="border-r px-2 border-lightgrey hover:text-lightgrey duration-200"
+              href="#"
+              >Home</a
+            >
+            <a
+              class="border-r px-2 border-lightgrey hover:text-lightgrey duration-200"
+              href="#category"
+              >Category</a
+            >
+            <a
+              class="border-r px-2 border-lightgrey hover:text-lightgrey duration-200"
+              href="#features"
+              >Features</a
+            >
+            <a
+              class="border-r px-2 border-lightgrey hover:text-lightgrey duration-200"
+              href="#about"
+              >About</a
+            >
+            <a
+              class="border-r px-2 border-lightgrey hover:text-lightgrey duration-200"
+              href="#download"
+              >Download</a
+            >
+            <a href="#testimony" class="px-2 hover:text-lightgrey duration-200"
+              >Testimonial</a
+            >
+          </div>
+          <div class="text-sm flex justify-center gap-2 text-white/50">
+            <p>8522869545</p>
+            <p>|</p>
+            <p>dummysupport.contact@gmail.com</p>
+          </div>
+          <p class="mb-4 text-center">
+            Copyright © 2025 <a href="http://localhost:8080">Weariva</a>. All
+            rights reservered.
+          </p>
+        </footer>
+      </th:block>
+    </main>
+    <script th:src="@{/js/script.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <section class="px-8">
+      <h1
+        class="text-3xl py-1 border-b border-gray-900 first-letter:text-gray-700"
+      >
+        My Cart
+      </h1>
+      <div class="grid grid-cols-1 lg:grid-cols-6 my-4 bg-white/20">
+        <div class="md:col-span-4 flex flex-col gap-2 p-2">
+          <th:block th:if="${authenticatedUser}">
+            <th:block th:if="${cartData.size > 0}">
+              <div
+                class="select-none p-3 grid items-center grid-cols-[2fr_1fr] md:grid-cols-[3fr_2fr_1fr] shadow rounded-sm gap-4 overflow-hidde hover:shadow-md duration-500"
+                th:each="cart,c:${cartData}"
+              >
+                <div class="">
+                  <div
+                    class="flex items-center gap-3 relative h-[12vw] sm:h-[10vw] md:h-[8vw] lg:h-[6vw]"
+                  >
+                    <img
+                      th:src="*{cart.product.imageUrl}"
+                      alt=""
+                      class="h-full"
+                    />
+                    <p
+                      class="text-gray-600 absolute top-[-20px] left-[-20px] w-10 h-10 shadow-md text-xs flex justify-center items-center bg-white rounded-full"
+                    >
+                      [[${cart.product.discount}]]%
+                    </p>
+                    <div class="">
+                      <p
+                        class="text-[2.3vw] sm:text-[1.8vw] md:text-[1.5vw] lg:text-[1.3vw] first-letter:text-gray-500"
+                      >
+                        [[${cart.product.name}]] ( $[[${cart.product.price}]] )
+                      </p>
+                      <p class="text-gray-800">[[${cart.product.category}]]</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <p class="">
+                    $ [[${ cart.product.discountedPrice}]] /
+                    [[${cart.quantity}]] Pcs
+                  </p>
+                  <p class="text-xl text-navi">
+                    <span
+                      >$ [[${cart.quantity * cart.product.discountedPrice}]]</span
+                    >
+                  </p>
+                </div>
+                <div
+                  class="flex justify-center items-center gap-3 px-3 col-span-2 md:col-span-1"
+                >
+                  <a
+                    th:href="@{'/user/updateCartItems/add/'+${cart.product.productId}}"
+                    class="w-10 shadow-sm py-2 my-2 cursor-pointer bg-stone-600 hover:bg-stone-900 text-white text-center rounded-full duration-300"
+                  >
+                    +
+                  </a>
+                  <p class="text-xl">[[${cart.quantity}]]</p>
+                  <a
+                    th:href="@{'/user/updateCartItems/sub/'+${cart.product.productId}}"
+                    class="w-10 shadow-sm py-2 my-2 cursor-pointer bg-stone-600 hover:bg-stone-900 text-white text-center rounded-full duration-300"
+                  >
+                    -
+                  </a>
+                </div>
+              </div>
+            </th:block>
+            <th:block th:unless="${cartData.size > 0}">
+              <div class="flex flex-col py-5 text-center gap-3">
+                <h1 class="text-5xl tracking-in-expand">No Cart Data Found</h1>
+                <p class="text-xl">Please Add Products into the Cart</p>
+                <a
+                  th:href="@{/products}"
+                  class="border px-5 py-1 rounded-full bg-stone-200 hover:bg-gray-600 w-[30%] mx-auto hover:text-white duration-500"
+                  >Explore Products</a
+                >
+              </div>
+            </th:block>
+          </th:block>
+        </div>
+        <div class="md:col-span-2 p-2 text-sm">
+          <h1 class="text-xl first-letter:text-gray-500">Cart Details</h1>
+          <div class="flex justify-between px-4 py-1">
+            <p>Cart Total</p>
+            <p>$ [[${totalcartvalue > 0 ? totalcartvalue : 0}]]</p>
+          </div>
+          <div class="flex justify-between px-4 py-1">
+            <p>Delivery Charges</p>
+            <p>$ 20</p>
+          </div>
+          <div class="flex justify-between px-4 py-2 text-2xl border-t">
+            <p>Total Amount</p>
+            <p>$ [[${(totalcartvalue > 0 ? totalcartvalue : 0) + 20}]]</p>
+          </div>
+          <th:block th:if="${totalcartvalue > 0}">
+            <div class="px-4 py-2">
+              <a
+                th:href="@{/user/checkout}"
+                class="text-center bg-navi hover:bg-darknavi text-white duration-300 border py-2 text-xl block hover:shadow-md"
+              >
+                Proceed to Checkout
+              </a>
+            </div>
+          </th:block>
+          <th:block th:unless="${totalcartvalue > 0}">
+            <div class="px-4 py-2">
+              <button
+                disabled
+                class="text-center cursor-not-allowed mx-auto w-full duration-300 bg-red-500 border border-darknavi rounded-lg py-2 text-xl block"
+              >
+                Restricted to Place Order
+              </button>
+            </div>
+          </th:block>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

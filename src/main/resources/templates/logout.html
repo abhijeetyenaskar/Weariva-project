@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logout</title>
+    <link rel="stylesheet" href="" data-th-href="@{/css/output.css}" />
+  </head>
+  <body
+    class="fade-in relative min-h-screen flex justify-center items-center bg-[url('/images/forget.jpg')] bg-cover"
+  >
+    <th:block th:if="${authenticatedUser}">
+      <div class="relative text-center px-20 pt-20 pb-5 rounded-lg z-50">
+        <p class="text-xl text-navi border-b mb-2 border-darknavi">- THANK YOU -</p>
+        <p class="text-3xl lg:text-5xl mb-1 first-letter:text-navi text-darknavi">
+          [[${authenticatedUser.gender =="male"?"Mr.":"Mrs."}]]
+          [[${authenticatedUser.name}]]
+        </p>
+
+        <p class="text-lg lg:text-2xl">Do you want to Logout?</p>
+        <div class="py-5 text-xs">
+          <a
+            class="shadow-sm hover:shadow-md duration-200 px-7 py-2 rounded-full border border-darknavi hover:bg-darknavi hover:text-white"
+            th:href="@{/logout}"
+            >Logout</a
+          >
+          <a
+            class="shadow-sm hover:shadow-md duration-200 px-7 py-2 rounded-full bg-navi hover:bg-darknavi text-white"
+            th:href="@{${authenticatedUser.roles =='ADMIN' ? '/admin':'/' }}"
+            >Cancel</a
+          >
+        </div>
+      </div>
+    </th:block>
+  </body>
+</html>

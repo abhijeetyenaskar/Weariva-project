@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  th:replace="~{wearivalayout::layout(~{::section})}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products</title>
+  </head>
+  <body>
+    <section class="grid grid-cols-1 lg:grid-cols-5 relative gap-2 fade-in">
+      <ul
+        class="py-1 px-3 z-50 bg-white backdrop-blur-md fixed top-0 bottom-0 -left-96 lg:left-0 lg:relative w-72 lg:w-full duration-500 border-r min-h-[85vh]"
+        id="filterSideBar"
+      >
+        <div class="flex justify-between items-center">
+          <p class="py-2 text-xl">Filters</p>
+          <button id="filterclose" class="block lg:hidden">
+            <i
+              class="fa-solid fa-xmark text-2xl hover:rotate-90 duration-500"
+            ></i>
+          </button>
+        </div>
+        <hr />
+        <li>
+          <a
+            th:href="@{'/products'}"
+            class="text-sm rounded-lg shadow w-full px-2 bg-darknavi text-white inline-block py-1 active:scale-95 duration-75"
+            >All</a
+          >
+        </li>
+        <div
+          th:each="cat,stat : ${categories}"
+          class="my-1 rounded-lg border border-darknavi/50 shadow overflow-hidden transition-all duration-500"
+        >
+          <div class="flex justify-between  bg-darknavi text-white">
+            <a
+              th:href="@{/products(category=${cat.key})}"
+              class="text-sm px-2 flex-1 inline-block py-1 transition-all duration-500"
+            >
+              [[${cat.key}]]
+            </a>
+            <button class="category-down flex-1 text-right pr-5">
+              <i class="fa-solid fa-caret-down"></i>
+            </button>
+          </div>
+          <ul class="category-sublist h-0  transition-all   duration-500 px-1 flex flex-col gap-1 overflow-y-scroll overflow-x-hidden">
+            <li th:each="sub ,s : ${cat.value}" class="hover:bg-darknavi transition-all my-1 duration-500 rounded-lg">
+              <a
+                th:href="@{/products(category=${cat.key},subcategory=${sub})}"
+                class="text-sm w-full px-5 inline-block py-1 active:scale-95 duration-75"
+                >[[${sub}]]</a
+              >
+            </li>
+          </ul>
+        </div>
+      </ul>
+      <script>
+        const categorybtns = document.querySelectorAll(".category-down");
+        const categorysublist = document.querySelectorAll(".category-sublist");
+        const facaretdown = document.querySelectorAll(".fa-caret-down");
+
+        categorybtns.forEach((element, index) => {
+          element.onclick = (e) => {
+            categorysublist[index].classList.toggle("h-36")
+            categorysublist[index].classList.toggle("h-0")
+            facaretdown[index].classList.toggle("rotate-180");
+          };
+        });
+      </script>
+      <div class="col-span-1 lg:col-span-4 p-3">
+        <div class="text-center">
+          <h1 class="text-3xl md:text-4xl lg:text-6xl mx-auto">
+            Our Latest
+            <span class="text-navi tracking-in-expand">Creations</span>
+          </h1>
+          <h4 class="pb-2 text-2xl md:text-4xl">
+            <span class="text-darknavi"
+              >[[${paramvalue == '' ? 'All' : paramvalue}]]</span
+            >
+            Collections
+          </h4>
+          <p class="text-xs md:text-sm text-slate-500 mt-1">
+            A visual collection of our most recent works - each piece crafted
+            with intention, emotion, and style.
+          </p>
+        </div>
+        <hr class="mt-3" />
+        <div
+          class="flex flex-wrap relative items-center justify-center mt-12 lg:mt-3 gap-4 max-w-5xl mx-auto"
+        >
+          <button
+            class="absolute -top-10 left-0 flex active:scale-100 hover:scale-105 transition-all duration-150 justify-center gap-2 text-xl shadow px-3 py-0.5 rounded-full items-center lg:hidden"
+            id="filterbtn"
+          >
+            <i class="fa-solid fa-filter text-center"></i>
+          </button>
+          <th:block th:if="${products}">
+            <div
+              class="relative shadow group rounded-lg overflow-hidden"
+              th:each="prop,c : ${products}"
+            >
+              <img
+                th:src="${prop.imageUrl}"
+                alt="image"
+                class="size-56 object-cover object-top"
+              />
+              <span
+                class="absolute flex justify-center items-center text-xs top-3 right-3 w-10 h-5 rounded-full bg-darknavi shadow-md text-white"
+              >
+                [[${prop.discount}]] <span class="text-blue-500">%</span>
+              </span>
+              <div
+                class="absolute inset-0 flex flex-col justify-end p-4 bg-white/50 opacity-0 group-hover:opacity-100 backdrop-blur-md transition-all duration-700"
+              >
+                <div class="py-2 px-3">
+                  <p class="text-lg text-stone-700 first-letter:text-black">
+                    [[${prop.name}]]
+                  </p>
+                  <p class="text-stone-500 text-xs">[[${prop.category}]]</p>
+                  <div class="gap-3">
+                    <p class="text-3xl text-navi">
+                      $[[${prop.discountedPrice}]]
+                      <span class="text-sm line-through text-gray-950"
+                        >$[[${prop.price}]]</span
+                      >
+                    </p>
+                  </div>
+                  <a th:href="@{'/productdetails/'+${prop.productId}}"
+                    >Show more
+                  </a>
+                </div>
+              </div>
+            </div>
+          </th:block>
+        </div>
+
+        <th:block th:unless="${products}">
+          <div
+            class="flex justify-center items-center text-center w-[85%] mx-auto p-6 h-60"
+          >
+            <h1 class="tracking-in-expand text-6xl text-gray-950">
+              <span class="text-stone-600">Products</span> Not Available.
+            </h1>
+          </div>
+        </th:block>
+      </div>
+    </section>
+  </body>
+</html>

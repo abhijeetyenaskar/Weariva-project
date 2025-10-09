@@ -1,0 +1,19 @@
+{
+  "name": "weariva_ecommerce",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/output.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "weariva_ecommerce": "file:"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.11"
+  }
+}
