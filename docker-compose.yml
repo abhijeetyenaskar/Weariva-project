@@ -1,0 +1,43 @@
+# version: "3.9" - deprecated in VS2 version
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    networks:
+      - weariva-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: weariva_ecommerce
+      MYSQL_USER: weariva_user
+      MYSQL_PASSWORD: secret123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql # persistant data inside it
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # DB initialization script
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: abhijitdevopshub/weariva_ecommerce:1.0
+    container_name: weariva_ecommerce_app
+    networks:
+      - weariva-network
+    env_file: 
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:
+ 
+networks:
+  weariva-network:
+    driver: bridge

@@ -122,7 +122,6 @@ public class UserController {
     public String getUpdateState(@PathVariable String status, @PathVariable Long orderId) {
 
         Orders myorder = this.orderService.getMyOrderById(orderId).orElse(null);
-        System.out.println(status);
         if (!ObjectUtils.isEmpty(myorder)) {
             for (MyOrdersStatus changeStatus : MyOrdersStatus.values()) {
                 if(status.equals(changeStatus.toString())){
@@ -173,7 +172,6 @@ public class UserController {
                                 rating.getRating(),
                                 rating.getReview()));
                 Product saveProduct = this.productService.saveProduct(productById);
-                System.out.println(saveProduct.getRating());
             }
         }
 

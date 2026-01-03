@@ -93,7 +93,6 @@ public class AdminController {
         Map<MyOrdersStatus, Long> orderDetails = allOrders.stream()
                 .collect(Collectors.groupingBy(Orders::getOrderStatus, Collectors.counting()));
 
-        System.out.println(orderDetails);
         model.addAttribute("orderDetails", orderDetails);
 
         model.addAttribute("products", allProducts);

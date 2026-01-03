@@ -28,7 +28,6 @@ public class CustomFailureAuthenticationHandler extends SimpleUrlAuthenticationF
         if (!ObjectUtils.isEmpty(user)) {
             if (user.isUserActive()) {
                 if (user.isAccountNonLocked()) { 
-                    System.out.println("Exueing");
                     userService.increaseFailures(exception, user); 
                 } else {
                     exception = new LockedException("Wait, It'll be unlock after certain Timeout!!");

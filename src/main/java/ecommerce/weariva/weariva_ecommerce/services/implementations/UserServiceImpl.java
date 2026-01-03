@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
     public void increaseFailures(AuthenticationException exception, User user) {
         int failureCount = user.getFailedCount() + 1;
         if (failureCount < 3) {
-            System.out.println(failureCount + " -> Exceuted");
             user.setFailedCount(failureCount);
             this.userRepository.save(user);
         } else {

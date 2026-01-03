@@ -108,18 +108,89 @@ public class DataSeeder {
     cp .env.example .env
 ```
 
-- Then fill the credential required.
+- Then fill the credential required in **.env** file.
 
-### 3. If you need to use TailwindCSS then install Node Modules (Optional) .
+### 3. To run application in Local host machine.
+
+#### 3.1. Add maven dependency into pom.xml file
+
+```xml
+    <dependency>
+    <groupId>io.github.cdimascio</groupId>
+    <artifactId>dotenv-java</artifactId>
+    <version>3.0.0</version>
+    </dependency>
+```
+
+#### 3.2. Copy highlighted code into **WearivaEcommerceApplication** class and above the main method.(Required if .env file is not working)
+
+```java
+        Dotenv dotenv = Dotenv.load();
+
+        // CLOUDINARY CONFIGURATION
+		System.setProperty("CLOUDINARY_URL",dotenv.get("CLOUDINARY_URL"));
+
+		// MAIL CONFIGURATION
+		System.setProperty("MAIL_HOST",dotenv.get("MAIL_HOST"));
+		System.setProperty("MAIL_PORT",dotenv.get("MAIL_PORT"));
+		System.setProperty("USERNAME_MAIL",dotenv.get("USERNAME_MAIL"));
+		System.setProperty("PASSWORD_MAIL",dotenv.get("PASSWORD_MAIL"));
+
+		// DATABASE CONFIGURATION
+		System.setProperty("DATABASE_SQL_URL",dotenv.get("DATABASE_SQL_URL"));
+		System.setProperty("DATABASE_DRIVER",dotenv.get("DATABASE_DRIVER"));
+		System.setProperty("DATABASE_USER",dotenv.get("DATABASE_USER"));
+		System.setProperty("DATABASE_PASSWORD",dotenv.get("DATABASE_PASSWORD"));
+```
+
+#### 3.4. If you need to use TailwindCSS then install Node Modules (Optional) .
 
 - In root folder, **npm install** and run **npm run build** command in the terminal.
 
-### 4. Run the Application
+### 3.4. Run the Application
 
 - mvn clean install
 - mvn spring-boot:run
 
-### 5. Open application in the browser and visit :
+### 4. To run application in Docker Containers using Docker CLI
+
+#### 4.1. Open **Command Prompt** from Project Directory
+
+#### 4.2. Create **Network Bridge** in Docker Daemon
+
+```bash
+    docker network create network-name
+```
+
+#### 4.3. Fetch and Run **MySQL** Container in Specified Network Before.
+
+```bash
+    docker run -d --name mysql --network weariva-network -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=weariva_ecommerce -e MYSQL_USER=weariva_root -e MYSQL_PASSWORD=secret123  -v ./db/init.sql:/docker-entrypoint-initdb.d/init.sql -p 3306:3306  mysql:8.4
+```
+
+#### 4.4. Create and Run **Weariva Application** Container in Specified Network before.
+
+- **Important** : Do use **jdbc:mysql://mysql:3306/db_name** for mysql in **JDBC_URL_CONNECTION_STRING** instead of using **jdbc:mysql://localhost:3306/db_name**
+
+```bash
+    docker run -d --name weariva-application --network weariva-network --env-file .env -p 8080:8080  abhijitdevopshub/weariva_ecommerce:1.0
+```
+
+### 5. To run application in Docker Containers using Docker Compose
+
+### 5.1. Run docker-compose.yml file in current project directory terminal using:
+
+```bash
+    docker compose up -d
+```
+
+### 5.2. Stop docker-compose.yml file in current project directory terminal using:
+
+```bash
+    docker compose down
+```
+
+### 6. Open application in the browser and visit :
 
 - http://localhost:8080/
 
@@ -140,6 +211,7 @@ public class DataSeeder {
 ## Project Structure
 
     weariva-ecommerce-application/
+    ├── db/
     ├── screenshots/  # virtual representation
     ├── src/
     │ ├── main/
@@ -157,7 +229,10 @@ public class DataSeeder {
     │ │ │ ├── templates/ # Thymeleaf templates
     │ │ │ ├── application.properties
     │ │ │ └── banner.txt
+    ├── .dockerignore
     ├── .env.example
+    ├── docker-compose.yml
+    ├── Dockerfile
     ├── mvnw
     ├── mvnw.cmd
     ├── pom.xml

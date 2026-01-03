@@ -15,7 +15,6 @@ import ecommerce.weariva.weariva_ecommerce.services.CustomAuthenticator;
 import ecommerce.weariva.weariva_ecommerce.services.CustomFailureAuthenticationHandler;
 import ecommerce.weariva.weariva_ecommerce.services.CustomLogoutSuccessHandler;
 import ecommerce.weariva.weariva_ecommerce.services.userdetailservices.CustomUserDetailsService;
-import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -66,10 +65,5 @@ public class SpringSecurityCustomConfiguration {
 
         httpSecurity.exceptionHandling(ex -> ex.accessDeniedPage("/unAuthenticated"));
         return httpSecurity.build();
-    }
-
-    @Bean
-    public Dotenv dotenv() {
-        return Dotenv.load(); // Loads from `.env`
     }
 }

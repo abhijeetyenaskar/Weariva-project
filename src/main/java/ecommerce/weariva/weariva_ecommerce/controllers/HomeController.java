@@ -180,7 +180,6 @@ public class HomeController {
     public String resetPassword(@RequestParam String username, HttpSession session, Model model) {
 
         User user = this.userService.getUserByUsername(username).orElse(null);
-        System.out.println(user);
         if (ObjectUtils.isEmpty(user)) {
             session.setAttribute("error", "Invalid Username!");
             return "forgetpassword";
@@ -207,7 +206,6 @@ public class HomeController {
                 User otpsend = userService.saveUser(user);
 
                 String linkMessage = "<h4>OTP is " + otp + "</h4>";
-                System.out.println(linkMessage);
                 messageService.sendEmail(choose, "OTP from Weariva Ecommerce Application!!", linkMessage);
                 model.addAttribute("username", otpsend.getUsername());
             }

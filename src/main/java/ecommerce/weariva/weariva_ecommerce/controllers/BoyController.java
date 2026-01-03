@@ -52,7 +52,6 @@ public class BoyController {
 
                 List<Orders> list = deliveryBoyOrderList.stream()
                 .filter(item -> item.getOrderStatus().toString().equals("OUT_FOR_DELIVERY")).toList();
-                System.out.println(list);
         model.addAttribute("deliveryOrders",list );
         return "/boys/myorders";
     }

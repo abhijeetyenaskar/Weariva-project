@@ -1,0 +1,1 @@
+CREATE DATABASE IF NOT EXISTS weariva_ecommerce;

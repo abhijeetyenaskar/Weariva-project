@@ -24,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             return userOptional.map(CustomUserDetails::new)
                     .orElseThrow(() -> new UsernameNotFoundException("Authentication Error"));
         } catch (Exception e) {
-            System.out.println("User Not found");
             return null;
         }
     }
