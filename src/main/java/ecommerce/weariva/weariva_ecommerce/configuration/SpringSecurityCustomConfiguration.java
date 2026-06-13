@@ -11,10 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import ecommerce.weariva.weariva_ecommerce.services.CustomAuthenticator;
-import ecommerce.weariva.weariva_ecommerce.services.CustomFailureAuthenticationHandler;
-import ecommerce.weariva.weariva_ecommerce.services.CustomLogoutSuccessHandler;
-import ecommerce.weariva.weariva_ecommerce.services.userdetailservices.CustomUserDetailsService;
+import ecommerce.weariva.weariva_ecommerce.common.CustomAuthenticator;
+import ecommerce.weariva.weariva_ecommerce.common.CustomFailureAuthenticationHandler;
+import ecommerce.weariva.weariva_ecommerce.common.CustomLogoutSuccessHandler;
+import ecommerce.weariva.weariva_ecommerce.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

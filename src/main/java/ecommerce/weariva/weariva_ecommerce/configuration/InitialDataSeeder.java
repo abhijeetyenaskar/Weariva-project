@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import ecommerce.weariva.weariva_ecommerce.models.Product;
-import ecommerce.weariva.weariva_ecommerce.models.Rating;
-import ecommerce.weariva.weariva_ecommerce.models.User;
-import ecommerce.weariva.weariva_ecommerce.repositories.ProductRepository;
-import ecommerce.weariva.weariva_ecommerce.repositories.UserRepository;
+import ecommerce.weariva.weariva_ecommerce.product.models.Product;
+import ecommerce.weariva.weariva_ecommerce.product.models.Rating;
+import ecommerce.weariva.weariva_ecommerce.product.repository.ProductRepository;
+import ecommerce.weariva.weariva_ecommerce.user.models.User;
+import ecommerce.weariva.weariva_ecommerce.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

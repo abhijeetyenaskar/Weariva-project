@@ -1,0 +1,58 @@
+package ecommerce.weariva.weariva_ecommerce.cart.services;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import ecommerce.weariva.weariva_ecommerce.cart.models.Cart;
+import ecommerce.weariva.weariva_ecommerce.cart.repository.CartRepository;
+import ecommerce.weariva.weariva_ecommerce.product.models.Product;
+import ecommerce.weariva.weariva_ecommerce.user.models.User;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class CartServiceImple implements CartService {
+
+    private final CartRepository cartRepository;
+
+    @Override
+    public Optional<Cart> getCartItemByUserAndProduct(User user, Product product) {
+        return this.cartRepository.findByUserAndProduct(user, product);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public Cart saveCart(Cart cart) {
+        return this.cartRepository.save(cart);
+    }
+
+    @SuppressWarnings("null")
+    @Override
+    public void deleteCartItem(Cart cartItem) {
+        this.cartRepository.delete(cartItem);
+    }
+
+    @Override
+    public Integer cartCount(User user) {
+        return this.cartRepository.countByUser(user);
+    }
+
+    @Override
+    public List<Cart> getAllCartItemsByUser(User user) {
+        return this.cartRepository.findByUser(user);
+    }
+
+    @Override
+    public boolean deleteCartItems(List<Cart> cartItems) {
+        if (cartItems.size() > 0) {
+            cartItems.stream().forEach(this::deleteCartItem);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+}
